@@ -1,0 +1,20 @@
+# Compiled binaries
+bin/
+*.o
+*.out
+
+# Logs
+logs/
+*.log
+*.pid
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local data files / Benchmark outputs
+benchmark_results.csv
+cpu_cycles.json
+tail_latency.json
+uploaded_orders.txt
+fix_test_data.txt

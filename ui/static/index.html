@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Finora Quantum-Safe HFT Terminal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+        :root {
+            --bg-color: #f1f5f9;
+            --panel-bg: #ffffff;
+            --panel-border: #cbd5e1;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #e2e8f0;
+            --accent-blue: #0969da;
+            --accent-blue-glow: rgba(9, 105, 218, 0.1);
+            --accent-green: #1a7f37;
+            --accent-green-glow: rgba(26, 127, 55, 0.1);
+            --accent-red: #cf222e;
+            --accent-red-glow: rgba(207, 34, 46, 0.1);
+            --accent-purple: #8250df;
+            --accent-purple-glow: rgba(130, 80, 223, 0.1);
+            --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--panel-border) transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(9, 105, 218, 0.03) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(130, 80, 223, 0.03) 0px, transparent 50%),
+                linear-gradient(rgba(15, 23, 42, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 23, 42, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            margin: 0;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 1650px;
+            margin: 0 auto;
+        }
+
+        /* Institutional Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-dot {
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-blue-glow);
+        }
+
+        .header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+            color: var(--text-main);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            background: #e2e8f0;
+            padding: 3px;
+            border-radius: 6px;
+            border: 1px solid var(--panel-border);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .tab-btn.active {
+            color: var(--text-main);
+            background: #ffffff;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Status indicators */
+        .system-status {
+            display: flex;
+            gap: 10px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            border: 1px solid var(--panel-border);
+            padding: 3px 8px;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            box-shadow: 0 0 6px var(--accent-green-glow);
+            animation: pulse 2s infinite;
+        }
+
+        .pulse-dot.blue {
+            background: var(--accent-blue);
+            box-shadow: 0 0 6px var(--accent-blue-glow);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(26, 127, 55, 0.4); }
+            70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(26, 127, 55, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(26, 127, 55, 0); }
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Stat Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-1px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 3px; height: 100%;
+            background: var(--accent-blue);
+        }
+
+        .stat-card.purple::before { background: var(--accent-purple); }
+        .stat-card.green::before { background: var(--accent-green); }
+        .stat-card.red::before { background: var(--accent-red); }
+
+        .stat-header {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            color: var(--text-main);
+        }
+
+        .stat-desc {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Layout panels */
+        .terminal-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            padding: 8px 10px;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px var(--accent-blue-glow);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px;
+            padding-right: 30px;
+        }
+
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-blue), #1d4ed8);
+            border: none;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Order Output Visualization */
+        .workspace-split {
+            display: grid;
+            grid-template-rows: auto auto auto 1fr;
+            gap: 15px;
+        }
+
+        /* Order Text Boxes (Raw values) */
+        .order-text-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .code-title {
+            font-size: 0.7rem;
+            font-family: var(--font-sans);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-box {
+            background: #f6f8fa;
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--accent-blue);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            height: 110px;
+        }
+
+        .code-box.bist {
+            color: var(--accent-green);
+        }
+
+        /* Envelope Comparison */
+        .envelope-container {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 20px;
+        }
+
+        .envelope-panel {
+            background: #f8fafc;
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .envelope-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Visual Block Diagram */
+        .packet-bar {
+            display: flex;
+            height: 24px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 1px solid var(--panel-border);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: bold;
+        }
+
+        .packet-block {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .packet-block:hover {
+            filter: brightness(1.05);
+        }
+
+        /* Colors for different cryptographic blocks (High-Contrast Light Theme) */
+        .blk-header { background: #6e7781; }
+        .blk-key { background: #0969da; }
+        .blk-kem { background: #8250df; }
+        .blk-nonce { background: #bc4c00; }
+        .blk-payload { background: #1a7f37; }
+        .blk-sig { background: #cf222e; }
+        .blk-len { background: #9a6700; }
+
+        /* Hex items rendering */
+        .hex-scroll-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .crypto-item {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+        .crypto-item:last-child {
+            border: none;
+        }
+
+        .crypto-tag {
+            font-size: 0.62rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .crypto-hex {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: #24292f;
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            padding: 5px;
+            border-radius: 3px;
+            max-height: 48px;
+            overflow-y: auto;
+            word-break: break-all;
+        }
+
+        /* Analytics tab */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+            width: 100%;
+        }
+
+        /* Benchmarks Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            background: #f8fafc;
+        }
+
+        tr:hover td {
+            background: rgba(15, 23, 42, 0.01);
+        }
+
+        /* Upload area */
+        .upload-zone {
+            border: 2px dashed var(--panel-border);
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent-blue);
+            background: rgba(37, 99, 235, 0.01);
+        }
+
+        .upload-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: var(--accent-blue);
+        }
+
+        .upload-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .upload-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-logo">
+                <div class="logo-dot"></div>
+                <h1>FINORA QUANTUM-SAFE HFT TERMINAL</h1>
+            </div>
+            
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="switchTab('terminal')">Live Terminal</button>
+                <button class="tab-btn" onclick="switchTab('analytics')">Performance Analytics</button>
+                <button class="tab-btn" onclick="switchTab('benchmark')">Dataset Benchmarks</button>
+            </div>
+
+            <div class="system-status">
+                <div class="status-indicator">
+                    <div class="pulse-dot"></div>
+                    <span>BIST: ONLINE</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="pulse-dot blue"></div>
+                    <span>TLS: ACTIVE</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="pulse-dot blue"></div>
+                    <span>PQC: SHIELDED</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Live Terminal -->
+        <div id="tab-terminal" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">TLS 1.3 Mean Latency</div>
+                    <div class="stat-value" id="term-tls-mean">-- ms</div>
+                    <div class="stat-desc">Standard ECDH + AES-GCM primitives</div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-header">PQC Tunnel Mean Latency</div>
+                    <div class="stat-value" id="term-pqc-mean">-- ms</div>
+                    <div class="stat-desc">ML-KEM-768 + ML-DSA-65 signature tunnel</div>
+                </div>
+                <div class="stat-card green" id="acceleration-card">
+                    <div class="stat-header">Latency Differential</div>
+                    <div class="stat-value" id="term-gap-val">-- ms</div>
+                    <div class="stat-desc" id="term-gap-desc">Quantum overhead gap</div>
+                </div>
+                <div class="stat-card red" id="pareto-card">
+                    <div class="stat-header">Tunnel State</div>
+                    <div class="stat-value" id="term-state-val" style="font-size: 1.1rem; height: 30px; display: flex; align-items: center;">Awaiting Execution</div>
+                    <div class="stat-desc">FIPS-203 / 204 crypto agility compliance</div>
+                </div>
+            </div>
+
+            <div class="terminal-grid">
+                <!-- Order entry form -->
+                <div class="panel">
+                    <h3 class="panel-title">Order Entry</h3>
+                    <form id="orderForm" onsubmit="sendManualOrder(event)">
+                        <div class="form-group">
+                            <label>Symbol / Asset</label>
+                            <select class="form-input form-select" id="orderSymbol">
+                                <option value="THYAO">THYAO (Turkish Airlines)</option>
+                                <option value="GARAN">GARAN (Garanti BBVA)</option>
+                                <option value="ASELS">ASELS (Aselsan)</option>
+                                <option value="AKBNK">AKBNK (Akbank)</option>
+                                <option value="BIMAS">BIMAS (Bim Birleşik Mağazalar)</option>
+                                <option value="EREGL">EREGL (Erdemir)</option>
+                                <option value="KCHOL">KCHOL (Koç Holding)</option>
+                                <option value="TUPRS">TUPRS (Tüpraş)</option>
+                                <option value="SAHOL">SAHOL (Sabancı Holding)</option>
+                                <option value="SISE">SISE (Şişecam)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Order Side</label>
+                            <select class="form-input form-select" id="orderSide">
+                                <option value="1">1 - Buy / Alış</option>
+                                <option value="2">2 - Sell / Satış</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity / Adet</label>
+                            <input type="number" class="form-input" id="orderQty" value="100" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Price / Fiyat (TL)</label>
+                            <input type="number" step="0.1" class="form-input" id="orderPrice" value="255.4">
+                        </div>
+                        <button type="submit" class="btn" id="sendBtn">
+                            <span class="logo-dot" style="width: 8px; height: 8px; box-shadow: 0 0 6px #ffffff; background: #ffffff;"></span>
+                            Transmit Order
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Live Cryptographic Tunnel Visualizer -->
+                <div class="panel workspace-split">
+                    <!-- Text row (Plaintext order & Execution report) -->
+                    <div class="order-text-row">
+                        <div>
+                            <div class="code-title">Plaintext FIX Message (Client)</div>
+                            <div class="code-box" id="plain-fix-box">// Transmit an order to display plaintext payload</div>
+                        </div>
+                        <div>
+                            <div class="code-title">Execution Report (BIST Response)</div>
+                            <div class="code-box bist" id="bist-fix-box">// Decrypted execution response from Mock BIST</div>
+                        </div>
+                    </div>
+
+                    <!-- Envelope side-by-side comparison -->
+                    <div>
+                        <div class="panel-title" style="margin-bottom: 10px; padding-bottom: 5px; font-size: 0.8rem;">
+                            WIRE PACKET ENVELOPE COMPARISON (TLS 1.3 VS FINORA PQC TUNNEL)
+                        </div>
+                        <div class="envelope-container">
+                            <!-- TLS 1.3 -->
+                            <div class="envelope-panel">
+                                <div class="envelope-header">
+                                    <span>STANDARD TLS 1.3 RECORD</span>
+                                    <span id="tls-envelope-size" style="color: var(--accent-blue); font-family: var(--font-mono);">-- Bytes</span>
+                                </div>
+                                <div class="packet-bar" id="tls-packet-bar">
+                                    <div class="packet-block blk-header" style="width: 10%;">HDR</div>
+                                    <div class="packet-block blk-payload" style="width: 70%;">PAYLOAD</div>
+                                    <div class="packet-block blk-sig" style="width: 20%;">TAG</div>
+                                </div>
+                                <div class="hex-scroll-box" id="tls-hex-container">
+                                    <div style="color: var(--text-muted); font-size: 0.75rem; text-align: center; margin-top: 30px;">Awaiting order execution...</div>
+                                </div>
+                            </div>
+
+                            <!-- PQC Tunnel -->
+                            <div class="envelope-panel">
+                                <div class="envelope-header">
+                                    <span>FINORA QUANTUM-SAFE SHIELD</span>
+                                    <span id="pqc-envelope-size" style="color: var(--accent-purple); font-family: var(--font-mono);">-- Bytes</span>
+                                </div>
+                                <div class="packet-bar" id="pqc-packet-bar">
+                                    <div class="packet-block blk-key" style="width: 5%;">X25519</div>
+                                    <div class="packet-block blk-kem" style="width: 25%;">ML-KEM</div>
+                                    <div class="packet-block blk-nonce" style="width: 5%;">NONCE</div>
+                                    <div class="packet-block blk-payload" style="width: 15%;">PAYLOAD</div>
+                                    <div class="packet-block blk-sig" style="width: 45%;">ML-DSA</div>
+                                    <div class="packet-block blk-len" style="width: 5%;">LEN</div>
+                                </div>
+                                <div class="hex-scroll-box" id="pqc-hex-container">
+                                    <div style="color: var(--text-muted); font-size: 0.75rem; text-align: center; margin-top: 30px;">Awaiting order execution...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Glossary / Explanation Area -->
+                    <div style="margin-top: 5px;">
+                        <div class="panel-title" style="margin-bottom: 10px; padding-bottom: 5px; font-size: 0.8rem;">
+                            KRİPTOGRAFİK ALAN AÇIKLAMALARI VE PROTOKOL DETAYLARI
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 15px; font-size: 0.78rem; line-height: 1.55;">
+                            <div style="background: #f8fafc; border: 1px solid var(--panel-border); border-radius: 6px; padding: 12px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);">
+                                <h4 style="margin-top:0; color: var(--accent-blue); font-size: 0.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; text-transform: uppercase;">Standard TLS 1.3 Record Katmanları</h4>
+                                <ul style="padding-left: 15px; margin: 0; display: flex; flex-direction: column; gap: 6px;">
+                                    <li><strong>Record Header (5B):</strong> Paket tipini (örn. 0x17 - Application Data) ve TLS sürümünü (Legacy 3.3) tanımlar.</li>
+                                    <li><strong>Sequence XOR'd Nonce (12B):</strong> TLS 1.3'te bağlantı sırasına göre XOR'lanarak üretilen IV; ağ üzerinde ekstra yük oluşturmaz.</li>
+                                    <li><strong>AES-GCM Ciphertext (Değişken):</strong> FIX verisinin ve 1 byte'lık orijinal paket tipi göstergesinin AES-GCM ile şifrelenmiş halidir. Confidentiality (gizlilik) sağlar.</li>
+                                    <li><strong>Auth Tag (16B):</strong> Şifrelenmiş verinin bütünlüğünü (integrity) doğrulamak için üretilen MAC etiketidir.</li>
+                                </ul>
+                            </div>
+                            <div style="background: #f8fafc; border: 1px solid var(--panel-border); border-radius: 6px; padding: 12px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);">
+                                <h4 style="margin-top:0; color: var(--accent-purple); font-size: 0.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; text-transform: uppercase;">Finora Hybrid PQC Shield Katmanları</h4>
+                                <ul style="padding-left: 15px; margin: 0; display: flex; flex-direction: column; gap: 6px;">
+                                    <li><strong>X25519 Ephemeral Key (32B):</strong> Kuantum öncesi klasik güvenliği sağlamak için kullanılan ECDH geçici anahtarı.</li>
+                                    <li><strong>ML-KEM-768 Ciphertext (1088B):</strong> FIPS 203 standardı Kyber tabanlı Kuantum Güvenli Anahtar Kapsülleme (KEM) verisidir.</li>
+                                    <li><strong>AES Nonce (12B):</strong> Simetrik AES-256-GCM koruması için her paket başında üretilen rastgele başlangıç vektörüdür.</li>
+                                    <li><strong>AES-256-GCM Payload (Değişken):</strong> FIX mesajının kuantum-güvenli ortak anahtarla şifrelenmiş gövdesidir.</li>
+                                    <li><strong>ML-DSA-65 Signature (3309B):</strong> FIPS 204 standardı Dilithium tabanlı Dijital İmza. Kuantum-güvenli kimlik doğrulaması sağlar.</li>
+                                    <li><strong>Length Prefix (4B):</strong> Tünel sınırlarını belirleyen büyük-endian formatında uzunluk verisi.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Analytics -->
+        <div id="tab-analytics" class="tab-content">
+            <div class="panel" style="margin-bottom: 15px;">
+                <h3 class="panel-title">Macro-Level FIX Execution Latency</h3>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="latencyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="panel">
+                    <h3 class="panel-title">Tail Latency (CDF Distribution)</h3>
+                    <div class="chart-container">
+                        <canvas id="cdfChart"></canvas>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3 class="panel-title">Primitive CPU Cycles (Hardware Cost)</h3>
+                    <div class="chart-container">
+                        <canvas id="cpuChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Benchmarks -->
+        <div id="tab-benchmark" class="tab-content">
+            <div id="drop-zone" class="upload-zone" onclick="document.getElementById('file-input').click()">
+                <div class="upload-icon">&#8682;</div>
+                <div class="upload-title" id="upload-status">Upload Order Dataset (.txt / .csv) to Run Performance Benchmark</div>
+                <div class="upload-subtitle">Files will be parsed by C++ FIX engine and executed under PQC tunnel simulation.</div>
+                <input type="file" id="file-input" style="display: none" accept=".txt,.csv" onchange="handleFiles(this.files)">
+            </div>
+
+            <div class="panel">
+                <h3 class="panel-title">Execution Metrics Table</h3>
+                <div class="table-container">
+                    <table id="metricsTable">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Plaintext Message</th>
+                                <th>TLS 1.3 Latency</th>
+                                <th>PQC Latency</th>
+                                <th>Diff</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted);">No benchmark executed. Upload a dataset above or send manual orders to populate history.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let latChart = null;
+        let cdfChart = null;
+        let cpuChart = null;
+        let orderHistory = [];
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            let tabIdx = (tabId === 'terminal') ? 0 : (tabId === 'analytics' ? 1 : 2);
+            document.querySelectorAll('.tab-btn')[tabIdx].classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            if (tabId === 'analytics') {
+                setTimeout(loadAnalytics, 100);
+            }
+        }
+
+        document.getElementById('orderSymbol').addEventListener('change', function(e) {
+            let symbol = e.target.value;
+            let priceEl = document.getElementById('orderPrice');
+            if (symbol === 'THYAO') priceEl.value = '255.4';
+            else if (symbol === 'BIMAS') priceEl.value = '380.0';
+            else if (symbol === 'ASELS') priceEl.value = '58.5';
+            else if (symbol === 'GARAN') priceEl.value = '68.2';
+            else priceEl.value = '112.5';
+        });
+
+        async function sendManualOrder(e) {
+            e.preventDefault();
+            
+            const symbol = document.getElementById('orderSymbol').value;
+            const side = document.getElementById('orderSide').value;
+            const qty = document.getElementById('orderQty').value;
+            const price = document.getElementById('orderPrice').value;
+            
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            sendBtn.innerText = "Transmitting...";
+            
+            try {
+                const response = await fetch('/api/send_single_order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ symbol, side, qty, price })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Update stats
+                    document.getElementById('term-tls-mean').innerText = data.tls_latency.toFixed(4) + ' ms';
+                    document.getElementById('term-pqc-mean').innerText = data.pqc_latency.toFixed(4) + ' ms';
+                    
+                    const diff = data.pqc_latency - data.tls_latency;
+                    const gapEl = document.getElementById('term-gap-val');
+                    gapEl.innerText = (diff > 0 ? '+' : '') + diff.toFixed(4) + ' ms';
+                    
+                    const paretoVal = document.getElementById('term-state-val');
+                    const paretoCard = document.getElementById('pareto-card');
+                    if (diff < 1.0) {
+                        paretoVal.innerText = "Superior Performance";
+                        paretoVal.style.color = "var(--accent-green)";
+                        paretoCard.style.borderColor = "var(--accent-green)";
+                    } else if (diff < 3.0) {
+                        paretoVal.innerText = "Lattice Boundary";
+                        paretoVal.style.color = "var(--accent-blue)";
+                        paretoCard.style.borderColor = "var(--accent-blue)";
+                    } else {
+                        paretoVal.innerText = "MTU Fragment Limit";
+                        paretoVal.style.color = "var(--accent-red)";
+                        paretoCard.style.borderColor = "var(--accent-red)";
+                    }
+
+                    // Render plain text payload & bist response
+                    document.getElementById('plain-fix-box').innerText = data.plaintext.replace(/\|/g, '\n');
+                    document.getElementById('bist-fix-box').innerText = data.bist_response.replace(/\|/g, '\n');
+                    
+                    // Render details & wire breakdown
+                    renderPacketComparison(data);
+                    
+                    addHistoryItem({
+                        id: orderHistory.length + 1,
+                        plaintext: data.plaintext,
+                        tls: data.tls_latency,
+                        pqc: data.pqc_latency,
+                        diff: diff
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('plain-fix-box').innerText = "Error completing order transmission.";
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerText = "Transmit Order";
+            }
+        }
+
+        function renderPacketComparison(data) {
+            // Standard TLS 1.3 details
+            document.getElementById('tls-envelope-size').innerText = `${data.tls_total_wire_size} Bytes`;
+            const tlsContainer = document.getElementById('tls-hex-container');
+            tlsContainer.innerHTML = `
+                <div class="crypto-item">
+                    <div class="crypto-tag"><span>1. TLS Record Header (5 Bytes)</span><span>ContentType=23 Version=3.3</span></div>
+                    <div class="crypto-hex">${data.tls_header_hex}</div>
+                </div>
+                <div class="crypto-item">
+                    <div class="crypto-tag"><span>2. Sequence XOR'd Nonce / IV (12 Bytes)</span><span>Implicit on wire</span></div>
+                    <div class="crypto-hex">${data.tls_nonce_hex}</div>
+                </div>
+                <div class="crypto-item">
+                    <div class="crypto-tag"><span>3. AES-GCM Ciphertext (${data.pqc_plaintext_size + 1} Bytes)</span><span>Includes Inner Content Type</span></div>
+                    <div class="crypto-hex">${data.tls_ciphertext_hex}</div>
+                </div>
+                <div class="crypto-item">
+                    <div class="crypto-tag"><span>4. Authentication Tag (16 Bytes)</span><span>AES-GCM MAC Tag</span></div>
+                    <div class="crypto-hex">${data.tls_tag_hex}</div>
+                </div>
+            `;
+
+            // Finora PQC details
+            document.getElementById('pqc-envelope-size').innerText = `${data.pqc_total_wire_size} Bytes`;
+            const pqcContainer = document.getElementById('pqc-hex-container');
+            pqcContainer.innerHTML = `
+                <div class="crypto-item">
+                    <div class="crypto-tag"><span>1. X25519 Ephemeral Key (32 Bytes)</span><span>Classical DH Agreement</span></div>
+                    <div class="crypto-hex">${data.x25519_pubkey_hex}</div>
+                </div>
+                <div class="crypto-item">
+                    <div class="crypto-tag"><span>2. ML-KEM-768 Ciphertext (1088 Bytes)</span><span>Lattice-based Encapsulation</span></div>
+                    <div class="crypto-hex">${data.kem_ciphertext_hex}</div>
+                </div>
+                <div class="crypto-item">
+                    <div class="crypto-tag"><span>3. AES-256-GCM Nonce (12 Bytes)</span><span>Entropy Source</span></div>
+                    <div class="crypto-hex">${data.aes_nonce_hex}</div>
+                </div>
+                <div class="crypto-item">
+                    <div class="crypto-tag"><span>4. AES-256-GCM Ciphertext (${data.pqc_plaintext_size + 16} Bytes)</span><span>Plaintext + Auth Tag</span></div>
+                    <div class="crypto-hex">${data.aes_ciphertext_hex}</div>
+                </div>
+                <div class="crypto-item">
+                    <div class="crypto-tag"><span>5. ML-DSA-65 Signature (3309 Bytes)</span><span>Lattice Digital Signature</span></div>
+                    <div class="crypto-hex">${data.mldsa_signature_hex}</div>
+                </div>
+            `;
+
+            // Scale visual bars
+            const tlsHdrPct = Math.max(8, (5 / data.tls_total_wire_size) * 100);
+            const tlsTagPct = Math.max(15, (16 / data.tls_total_wire_size) * 100);
+            const tlsPayloadPct = 100 - tlsHdrPct - tlsTagPct;
+            
+            const tlsBar = document.getElementById('tls-packet-bar');
+            tlsBar.innerHTML = `
+                <div class="packet-block blk-header" style="width: ${tlsHdrPct}%;" title="Record Header: 5B">HDR</div>
+                <div class="packet-block blk-payload" style="width: ${tlsPayloadPct}%;" title="AES-GCM Ciphertext: ${data.pqc_plaintext_size + 1}B">PAYLOAD</div>
+                <div class="packet-block blk-sig" style="width: ${tlsTagPct}%;" title="MAC Tag: 16B">TAG</div>
+            `;
+
+            const pqcBar = document.getElementById('pqc-packet-bar');
+            pqcBar.innerHTML = `
+                <div class="packet-block blk-key" style="width: 8%;" title="X25519 Key: 32B">DH</div>
+                <div class="packet-block blk-kem" style="width: 25%;" title="ML-KEM-768 Ciphertext: 1088B">ML-KEM</div>
+                <div class="packet-block blk-nonce" style="width: 6%;" title="AES Nonce: 12B">IV</div>
+                <div class="packet-block blk-payload" style="width: 15%;" title="AES Ciphertext: ${data.pqc_plaintext_size + 16}B">PAYLOAD</div>
+                <div class="packet-block blk-sig" style="width: 40%;" title="ML-DSA-65 Signature: 3309B">ML-DSA</div>
+                <div class="packet-block blk-len" style="width: 6%;" title="Length: 4B">LEN</div>
+            `;
+        }
+
+        function addHistoryItem(item) {
+            orderHistory.push(item);
+            const tbody = document.querySelector('#metricsTable tbody');
+            if (orderHistory.length === 1) {
+                tbody.innerHTML = '';
+            }
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-family: var(--font-mono); font-weight:600; color:var(--accent-blue);">#${item.id}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.72rem; max-width: 450px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.plaintext}</td>
+                <td style="font-family: var(--font-mono);">${item.tls.toFixed(4)} ms</td>
+                <td style="font-family: var(--font-mono); color:var(--accent-purple);">${item.pqc.toFixed(4)} ms</td>
+                <td style="font-family: var(--font-mono); color:${item.diff > 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">${(item.diff > 0 ? '+' : '') + item.diff.toFixed(4)} ms</td>
+                <td><span style="background: rgba(26, 127, 55, 0.1); color: var(--accent-green); padding: 1px 5px; border-radius: 3px; font-size: 0.7rem; border: 1px solid var(--accent-green);">FILLED</span></td>
+            `;
+            tbody.insertBefore(tr, tbody.firstChild);
+        }
+
+        async function handleFiles(files) {
+            if(files.length === 0) return;
+            const file = files[0];
+            document.getElementById('upload-status').innerText = `Running benchmark on dataset ${file.name}...`;
+            try {
+                const response = await fetch('/api/upload_orders', {
+                    method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: await file.text()
+                });
+                if (response.ok) {
+                    document.getElementById('upload-status').innerText = `Execution Complete. Generating Analytics...`;
+                    setTimeout(() => {
+                        switchTab('analytics');
+                        document.getElementById('upload-status').innerText = `Upload Order Dataset (.txt / .csv) to Run Performance Benchmark`;
+                    }, 1200);
+                }
+            } catch (err) {
+                document.getElementById('upload-status').innerText = `Network Error`;
+            }
+        }
+
+        async function loadAnalytics() {
+            try {
+                const resTs = await fetch('/api/benchmark_data');
+                const dataTs = await resTs.json();
+                const resAc = await fetch('/api/academic_data');
+                const dataAc = await resAc.json();
+
+                if (dataTs.error) return;
+
+                Chart.defaults.color = '#475569';
+                Chart.defaults.font.family = "'Outfit', sans-serif";
+
+                if(latChart) latChart.destroy();
+                const step = Math.ceil(dataTs.labels.length / 500);
+                const labels = [], std = [], cpp = [];
+                for(let i=0; i<dataTs.labels.length; i+=step) {
+                    labels.push(dataTs.labels[i]);
+                    std.push(dataTs.std_latencies[i]);
+                    cpp.push(dataTs.cpp_latencies[i]);
+                }
+
+                const ctxLat = document.getElementById('latencyChart').getContext('2d');
+                const gradBlue = ctxLat.createLinearGradient(0, 0, 0, 300);
+                gradBlue.addColorStop(0, 'rgba(9, 105, 218, 0.15)');
+                gradBlue.addColorStop(1, 'rgba(9, 105, 218, 0)');
+
+                const gradPurple = ctxLat.createLinearGradient(0, 0, 0, 300);
+                gradPurple.addColorStop(0, 'rgba(130, 80, 223, 0.15)');
+                gradPurple.addColorStop(1, 'rgba(130, 80, 223, 0)');
+
+                latChart = new Chart(ctxLat, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { 
+                                label: 'Finora Post-Quantum Tunnel', 
+                                data: cpp, 
+                                borderColor: '#8250df', 
+                                backgroundColor: gradPurple,
+                                borderWidth: 1.8, 
+                                pointRadius: 0.5, 
+                                pointHoverRadius: 4,
+                                fill: true,
+                                tension: 0.15 
+                            },
+                            { 
+                                label: 'Standard TLS 1.3', 
+                                data: std, 
+                                borderColor: '#0969da', 
+                                backgroundColor: gradBlue,
+                                borderWidth: 1.5, 
+                                borderDash: [4,4],
+                                pointRadius: 0.5, 
+                                pointHoverRadius: 4,
+                                fill: true,
+                                tension: 0.15 
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top', labels: { boxWidth: 12 } }
+                        },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { color: 'rgba(0,0,0,0.03)' }, title: { display: true, text: 'Latency (ms)' } }
+                        }
+                    }
+                });
+
+                if(cdfChart) cdfChart.destroy();
+                if(dataAc.tail_latency) {
+                    const ctxCdf = document.getElementById('cdfChart').getContext('2d');
+                    cdfChart = new Chart(ctxCdf, {
+                        type: 'line',
+                        data: {
+                            labels: ['p50 (Median)', 'p90', 'p99', 'p99.9 (Tail)'],
+                            datasets: [
+                                { 
+                                    label: 'Finora PQC', 
+                                    data: [dataAc.tail_latency.pqc.p50, dataAc.tail_latency.pqc.p90, dataAc.tail_latency.pqc.p99, dataAc.tail_latency.pqc.p999], 
+                                    borderColor: '#8250df', 
+                                    backgroundColor: 'rgba(130, 80, 223, 0.1)', 
+                                    fill: true, 
+                                    tension: 0.2,
+                                    borderWidth: 1.8
+                                },
+                                { 
+                                    label: 'Standard TLS 1.3', 
+                                    data: [dataAc.tail_latency.tls.p50, dataAc.tail_latency.tls.p90, dataAc.tail_latency.tls.p99, dataAc.tail_latency.tls.p999], 
+                                    borderColor: '#0969da', 
+                                    borderDash: [4,4],
+                                    fill: false, 
+                                    tension: 0.2,
+                                    borderWidth: 1.8
+                                }
+                            ]
+                        },
+                        options: { 
+                            responsive: true, 
+                            maintainAspectRatio: false,
+                            scales: { 
+                                x: { grid: { display: false } },
+                                y: { grid: { color: 'rgba(0,0,0,0.03)' }, title: { display: true, text: 'Latency (ms)' } } 
+                            } 
+                        }
+                    });
+                }
+
+                if(cpuChart) cpuChart.destroy();
+                if(dataAc.cpu_cycles) {
+                    const ctxCpu = document.getElementById('cpuChart').getContext('2d');
+                    cpuChart = new Chart(ctxCpu, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Key Agreement / KEM', 'Signature / Verification'],
+                            datasets: [
+                                { 
+                                    label: 'Classic (X25519 / ECDSA)', 
+                                    data: [dataAc.cpu_cycles.kem.x25519_encaps, dataAc.cpu_cycles.dsa.ecdsa_sign], 
+                                    backgroundColor: 'rgba(9, 105, 218, 0.75)',
+                                    borderColor: '#0969da',
+                                    borderWidth: 1
+                                },
+                                { 
+                                    label: 'PQC (ML-KEM-768 / ML-DSA-65)', 
+                                    data: [dataAc.cpu_cycles.kem.ml_kem_encaps, dataAc.cpu_cycles.dsa.ml_dsa_sign], 
+                                    backgroundColor: 'rgba(130, 80, 223, 0.75)',
+                                    borderColor: '#8250df',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: { 
+                            responsive: true, 
+                            maintainAspectRatio: false,
+                            scales: { 
+                                x: { grid: { display: false } },
+                                y: { 
+                                    type: 'logarithmic', 
+                                    grid: { color: 'rgba(0,0,0,0.03)' },
+                                    title: { display: true, text: 'CPU Cycles (Log Scale)' }
+                                } 
+                            } 
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
