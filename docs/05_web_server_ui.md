@@ -5,7 +5,7 @@ Bu döküman, **C++ Web Server** ve **HTML5/JS Dashboard Arayüzü** bileşenler
 ---
 
 ## 1. Özet Paragrafı
-**Web Sunucusu ve Dashboard Arayüzü**, FIX-Q platformunun yönetim merkezini ve kullanıcı etkileşim katmanını oluşturur. Backend, tek bir header'dan oluşan hafif `httplib.h` kütüphanesi üzerine kurulu bir C++ web sunucusudur ve `Port 8080` üzerinde çalışır. Statik web dosyalarını (`ui/static/index.html`) doğrudan istemciye sunmanın yanı sıra; proksilerden veri toplayan, toplu testleri başlatan ve kriptografik analiz komutlarını (`encrypt_order.py`) tetikleyen REST API uç noktaları (endpoints) barındırır. Tarayıcı tarafında çalışan arayüz ise; modern **Outfit** ve **JetBrains Mono** fontları ile tasarlanmış, tek sayfalık (SPA) premium bir terminal arayüzüdür. Kullanıcılar bu arayüz üzerinden manuel emirler gönderebilir, bu emirlerin TLS ve PQC proksileri üzerindeki anlık gecikmelerini ölçebilir ve kablo üzerindeki (on-the-wire) paket yapısının bayt bayt görsel dökümünü inceleyebilirler.
+**Web Sunucusu ve Dashboard Arayüzü**, FIX-Q platformunun yönetim merkezini ve kullanıcı etkileşim katmanını oluşturur. Backend, tek bir header'dan oluşan hafif `httplib.h` kütüphanesi üzerine kurulu bir C++ web sunucusudur ve `Port 8080` üzerinde çalışır. Statik web dosyalarını (`ui/static/index.html`) doğrudan istemciye sunmanın yanı sıra; proksilerden veri toplayan, toplu testleri başlatan ve kriptografik analiz komutlarını (`encrypt_order.py`) tetikleyen REST API uç noktaları (endpoints) barındırır. Tarayıcı tarafında çalışan arayüz ise; modern **Outfit** ve **JetBrains Mono** fontları ile tasarlanmış, tek sayfalık (SPA) premium bir terminal arayüzüdür. Kullanıcılar bu arayüz üzerinden manuel emirler gönderebilir, bu emirlerin TLS ve PQC proksileri üzerindeki anlık gecikmelerini ölçebilir, kablo üzerindeki (on-the-wire) paket yapısının bayt bayt görsel dökümünü inceleyebilir ve Klasik Bilgisayar (Normal PC) ile Kuantum Bilgisayarı (Quantum PC) kırma sürelerini ve kuantum güvenlik risklerini kıyaslayabilirler.
 
 ---
 
@@ -16,7 +16,7 @@ Aşağıdaki şema, Web Sunucusu ile diğer sistem bileşenleri ve istemci taray
 graph TD
     User([Kullanıcı Tarayıcısı]) -->|1. HTTP / API Request| WebServer[C++ Web Server - Port 8080]
     
-    subgraph Web Server API Endpoints
+    subgraph WebServerEndpoints ["Web Server API Endpoints"]
         WebServer -->|GET /| MountPoint[Static Files: index.html]
         WebServer -->|GET /api/benchmark_data| ParseCSV[benchmark_results.csv Okuyucu]
         WebServer -->|GET /api/academic_data| ParseJSON[tail_latency.json & cpu_cycles.json Okuyucu]

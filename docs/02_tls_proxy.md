@@ -20,15 +20,15 @@ Aşağıdaki şema, TLS Proxy Suite'in çift taraflı tünelleme mimarisini ve v
 graph TD
     Client([HFT Client - Plaintext]) -->|1. TCP Port 5007| EntryServer[TlsClientEntryServer]
     
-    subgraph TLS Proxy Suite
+    subgraph TLSProxySuite ["TLS Proxy Suite"]
         direction TB
-        subgraph Port 5007 - İstemci Girişi
+        subgraph Port5007Entry ["Port 5007 - İstemci Girişi"]
             EntryServer -->|2. SSL_connect| TLSClient[OpenSSL Client Context]
         end
         
         TLSClient -->|3. TLS 1.3 Encrypted Tunnel| DecryptServer[TlsDecryptServer - Port 5008]
         
-        subgraph Port 5008 - Şifre Çözücü Sunucu
+        subgraph Port5008Decrypt ["Port 5008 - Şifre Çözücü Sunucu"]
             DecryptServer -->|4. Load Certs & SSL_accept| SSLServerContext[OpenSSL Server Context]
         end
     end
@@ -47,7 +47,7 @@ flowchart TD
     InitOpenSSL --> StartDecrypt[Thread 1: TlsDecryptServer Başlat - Port 5008]
     InitOpenSSL --> StartEntry[Thread 2 / Main: TlsClientEntryServer Başlat - Port 5007]
     
-    subgraph TlsDecryptServer Sunucu Akışı (Port 5008)
+    subgraph TlsDecryptFlow ["TlsDecryptServer Sunucu Akışı (Port 5008)"]
         StartDecrypt --> LoadCerts[certs/server.crt ve server.key Yükle]
         LoadCerts --> AcceptTLS[Bağlantı Kabul Et & SSL_accept ile El Sıkışması Yap]
         AcceptTLS --> ConnectBist[Mock BIST Sunucusuna Bağlan - Port 5003]
@@ -56,7 +56,7 @@ flowchart TD
         ProxyThreads -->|Thread B| EncryptResp[read plaintext from BIST -> SSL_write]
     end
 
-    subgraph TlsClientEntryServer İstemci Akışı (Port 5007)
+    subgraph TlsClientFlow ["TlsClientEntryServer İstemci Akışı (Port 5007)"]
         StartEntry --> AcceptPlain[Düz Metin İstemci Bağlantısı Kabul Et]
         AcceptPlain --> ConnectDecrypt[TlsDecryptServer Sunucusuna Bağlan - Port 5008]
         ConnectDecrypt --> Handshake[SSL_new & SSL_connect ile TLS El Sıkışması Gerçekleştir]

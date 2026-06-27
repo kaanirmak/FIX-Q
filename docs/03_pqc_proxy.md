@@ -24,7 +24,7 @@ graph TD
         HandleClient -->|4. Start Forward Threads| Thread1[Thread 1: Forward Client to BIST]
         HandleClient -->|4. Start Forward Threads| Thread2[Thread 2: Forward BIST to Client]
         
-        subgraph Simüle PQC Zırhı ve Gecikme
+        subgraph SimulatePqcArmor ["Simüle PQC Zırhı ve Gecikme"]
             Thread1 -->|5. Encrypt / Decrypt| EVP_AES[OpenSSL EVP AES-256-GCM]
             EVP_AES -->|6. Enjekte Edilen Gecikme| Delay[std::this_thread::sleep_for 2-4ms]
         end
@@ -46,7 +46,7 @@ flowchart TD
     
     OpenTunnel --> StartThreads[İki Yönlü Yönlendirme İş Parçacıklarını Başlat]
     
-    subgraph Yönlendirme Döngüsü (forward_data)
+    subgraph ForwardLoop ["Yönlendirme Döngüsü (forward_data)"]
         StartThreads --> Read[Soketten Veri Oku]
         Read --> CheckData{Veri Var mı?}
         CheckData -- Hayır/Bağlantı Kapandı --> Shutdown[Soketleri Kapat & Tüneli Kapat]

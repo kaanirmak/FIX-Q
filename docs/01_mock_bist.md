@@ -40,7 +40,7 @@ flowchart TD
     Accept -- Evet --> Thread[Ayrı bir Thread Başlat handle_client]
     Accept -- Hayır --> Listen
     
-    subgraph İstemci İletişim Döngüsü (handle_client)
+    subgraph ClientLoop ["İstemci İletişim Döngüsü (handle_client)"]
         Thread --> Read[Soketten Veri Oku - buffer 4096B]
         Read --> CheckRead{Veri Okundu mu?}
         CheckRead -- Bağlantı Koptu / Hata --> Close[Bağlantıyı Kapat & Thread Sonlandır]

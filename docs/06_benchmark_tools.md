@@ -18,7 +18,7 @@ graph TD
     Gen[generate_fix_data.py] -->|1. Generate| DataFile[fix_test_data.txt / Uploaded Orders]
     
     %% Benchmark Engine
-    subgraph Benchmark Suite
+    subgraph BenchmarkSuite ["Benchmark Suite"]
         Bench[benchmark.cpp]
         Micro[micro_bench.cpp]
     end

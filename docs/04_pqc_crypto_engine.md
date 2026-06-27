@@ -44,7 +44,7 @@ Aşağıdaki akış şeması, istemciden gönderilen emrin PQC tünel paketi hal
 
 ```mermaid
 flowchart TD
-    subgraph process_outgoing (Paketleme)
+    subgraph OutgoingProcess ["process_outgoing (Paketleme)"]
         A[Ham FIX Verisi] --> B[X25519 Ephemeral Key Üret - 32B]
         B --> C[ML-KEM-768 Encapsulate Et - 1088B KEM CT]
         C --> D[AES-256-GCM ile Ham Veriyi Şifrele - Nonce 12B + Ciphertext]
@@ -54,7 +54,7 @@ flowchart TD
         G --> H([PQC Wire Packet])
     end
 
-    subgraph process_incoming (Paket Açma)
+    subgraph IncomingProcess ["process_incoming (Paket Açma)"]
         I([PQC Wire Packet]) --> J[Son 4 Byte'tan Plaintext Boyutunu Oku]
         J --> K[İmza Bölümünü Ayır - Son 4B öncesindeki 3309B]
         K --> L[İmzalanmış Gövdeyi Ayır]

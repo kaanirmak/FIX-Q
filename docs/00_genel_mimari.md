@@ -14,24 +14,24 @@ Aşağıdaki diyagram, FIX-Q projesinin bileşenlerini ve veri yollarını göst
 
 ```mermaid
 graph TD
-    subgraph Client Space (İstemci Alanı)
+    subgraph ClientSpace ["Client Space (İstemci Alanı)"]
         Client[Plaintext FIX Client]
         WebUI[Web Browser Dashboard - Port 8080]
     end
 
-    subgraph Security Tunnel Layer (Güvenlik Tüneli Katmanı)
-        subgraph TLS Suite
+    subgraph SecurityTunnel ["Security Tunnel Layer (Güvenlik Tüneli Katmanı)"]
+        subgraph TLSSuite ["TLS Suite"]
             TLSEntry[TLS Client Entry Server - Port 5007]
             TLSDecrypt[TLS Decrypt Server - Port 5008]
         end
         PQCProxy[PQC Proxy Server - Port 5006]
     end
 
-    subgraph Exchange Simulator (Borsa Simülatörü)
+    subgraph ExchangeSim ["Exchange Simulator (Borsa Simülatörü)"]
         MockBist[Mock BIST Server - Port 5003]
     end
 
-    subgraph Monitoring & Orchestration (İzleme ve Yönetim)
+    subgraph MonitoringOrch ["Monitoring & Orchestration (İzleme ve Yönetim)"]
         WebServer[C++ Web Server - Port 8080]
         PyCrypto[Python Cryptographic Engine]
         Bench[C++ Benchmark Engine]
@@ -65,12 +65,12 @@ Aşağıdaki akış şeması, sisteme gönderilen manuel bir emrin şifrelenmesi
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User as Kullanıcı (Tarayıcı)
-    participant WS as Web Server (Port 8080)
-    participant TP as TLS Proxy Suite (Port 5007)
-    participant PP as PQC Proxy Server (Port 5006)
-    participant BIST as Mock BIST (Port 5003)
-    participant PY as Python Crypto Script
+    actor User as "Kullanıcı (Tarayıcı)"
+    participant WS as "Web Server (Port 8080)"
+    participant TP as "TLS Proxy Suite (Port 5007)"
+    participant PP as "PQC Proxy Server (Port 5006)"
+    participant BIST as "Mock BIST (Port 5003)"
+    participant PY as "Python Crypto Script"
 
     User->>WS: Post Order (Symbol, Qty, Price)
     Note over WS: FIX NewOrderSingle (35=D) oluşturulur.
