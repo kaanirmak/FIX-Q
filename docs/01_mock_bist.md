@@ -44,7 +44,7 @@ flowchart TD
         Thread --> Read[Soketten Veri Oku - buffer 4096B]
         Read --> CheckRead{Veri Okundu mu?}
         CheckRead -- Bağlantı Koptu / Hata --> Close[Bağlantıyı Kapat & Thread Sonlandır]
-        CheckRead -- Evet --> ConvertSOH[Borulardan '|' SOH '\x01' Karakterine Dönüştür]
+        CheckRead -- Evet --> ConvertSOH["Borulardan '|' SOH '\\x01' Karakterine Dönüştür"]
         
         ConvertSOH --> Validate[FIX İletisini Doğrula BeginString, BodyLength, Checksum]
         Validate --> IsValid{İleti Geçerli mi?}
