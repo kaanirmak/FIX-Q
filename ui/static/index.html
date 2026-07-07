@@ -545,6 +545,115 @@
             font-size: 0.75rem;
             color: var(--text-muted);
         }
+
+        /* Quantum crack comparison styles */
+        .quantum-calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .quantum-card {
+            background: #f8fafc;
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+
+        .quantum-card.tls-vuln {
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .quantum-card.pqc-secure {
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .quantum-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+        }
+
+        .q-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-red {
+            background: var(--accent-red-glow);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        .badge-green {
+            background: var(--accent-green-glow);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .q-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .q-metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.76rem;
+        }
+
+        .q-metric-label {
+            color: var(--text-muted);
+        }
+
+        .q-metric-val {
+            font-weight: 500;
+        }
+
+        .green-text {
+            color: var(--accent-green);
+        }
+
+        .red-text {
+            color: var(--accent-red);
+        }
+
+        .font-mono {
+            font-family: var(--font-mono);
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .q-card-desc {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            margin-top: 4px;
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
@@ -727,6 +836,56 @@
                                     <li><strong>ML-DSA-65 Signature (3309B):</strong> FIPS 204 standardı Dilithium tabanlı Dijital İmza. Kuantum-güvenli kimlik doğrulaması sağlar.</li>
                                     <li><strong>Length Prefix (4B):</strong> Tünel sınırlarını belirleyen büyük-endian formatında uzunluk verisi.</li>
                                 </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quantum Attack Resistance Comparison -->
+                    <div style="margin-top: 15px;">
+                        <div class="panel-title" style="margin-bottom: 10px; padding-bottom: 5px; font-size: 0.8rem;">
+                            KUANTUM ANALİZ VE KIRMA SÜRESİ KIYASLAMASI (NORMAL PC VS KUANTUM PC)
+                        </div>
+                        <div class="quantum-calc-grid">
+                            <!-- TLS 1.3 Card -->
+                            <div class="quantum-card tls-vuln">
+                                <div class="q-card-header">
+                                    <span>STANDART TLS 1.3 (ECDSA/X25519)</span>
+                                    <span class="badge badge-red">KUANTUM RİSKİ</span>
+                                </div>
+                                <div class="q-card-body">
+                                    <div class="q-metric-row">
+                                        <span class="q-metric-label">Normal PC / Süperbilgisayar:</span>
+                                        <span class="q-metric-val font-mono green-text">> 10<sup>18</sup> Yıl (Güvenli)</span>
+                                    </div>
+                                    <div class="q-metric-row">
+                                        <span class="q-metric-label">Kuantum Bilgisayarı (Shor Alg.):</span>
+                                        <span class="q-metric-val font-mono red-text font-bold">~10 Sn - 5 Dk (KIRILDI)</span>
+                                    </div>
+                                    <div class="q-card-desc">
+                                        ECDSA ve X25519, Shor Algoritması kullanan yeterli kapasitedeki (2330 mantıksal qubit) kuantum bilgisayarlarıyla saniyeler içinde kırılabilir.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- PQC Card -->
+                            <div class="quantum-card pqc-secure">
+                                <div class="q-card-header">
+                                    <span>FINORA HYBRID PQC SHIELD (ML-KEM/ML-DSA)</span>
+                                    <span class="badge badge-green">KUANTUM GÜVENLİ</span>
+                                </div>
+                                <div class="q-card-body">
+                                    <div class="q-metric-row">
+                                        <span class="q-metric-label">Normal PC / Süperbilgisayar:</span>
+                                        <span class="q-metric-val font-mono green-text">> 10<sup>38</sup> Yıl (Güvenli)</span>
+                                    </div>
+                                    <div class="q-metric-row">
+                                        <span class="q-metric-label">Kuantum Bilgisayarı (Grover/Sieve):</span>
+                                        <span class="q-metric-val font-mono green-text font-bold">> 10<sup>15</sup> Yıl (Güvenli)</span>
+                                    </div>
+                                    <div class="q-card-desc">
+                                        Kyber (ML-KEM) ve Dilithium (ML-DSA) kafes tabanlıdır. Shor algoritması bunlara etki etmez, Grover ise kırma süresini anlamlı ölçüde düşüremez.
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
