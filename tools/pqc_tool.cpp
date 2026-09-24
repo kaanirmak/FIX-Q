@@ -91,6 +91,10 @@ int main(int argc, char* argv[]) {
         std::cout << "  \"bist_response\": \"" << bist_resp << "\",\n";
         std::cout << "  \"tls_latency\": " << tls_latency << ",\n";
         std::cout << "  \"pqc_latency\": " << pqc_latency << ",\n";
+        std::cout << "  \"kem_time_us\": " << breakdown.kem_time_us << ",\n";
+        std::cout << "  \"auth_time_us\": " << breakdown.auth_time_us << ",\n";
+        std::cout << "  \"total_handshake_us\": " << breakdown.total_handshake_us << ",\n";
+        std::cout << "  \"auth_mode\": \"" << breakdown.auth_mode << "\",\n";
         std::cout << "  \"finora_magic_hex\": \"464e\",\n";
         std::cout << "  \"finora_version\": 1,\n";
         std::cout << "  \"finora_payload_type\": 16,\n";

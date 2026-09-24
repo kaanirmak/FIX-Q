@@ -213,6 +213,55 @@ int main() {
         if (!ring.is_empty()) throw std::runtime_error("Ring should be empty after release");
     });
 
+    // Test 9: Decoupled Peer Authentication (CeFi Bilateral Pinning & Web3 ML-DSA-65)
+    run_test("AuthManager Decoupled CeFi Pinning & Web3 ML-DSA-65", [&]() {
+        finora::AuthManager auth_cefi(finora::AuthMode::BILATERAL_PINNING);
+        
+        // 1. CeFi Valid Peer
+        auto res1 = auth_cefi.authenticate_peer("BIST_CORE_01", nullptr, 0);
+        if (!res1.authenticated) throw std::runtime_error("BIST_CORE_01 pinning should pass");
+        if (res1.auth_time_us <= 0.0) throw std::runtime_error("Auth time must be recorded");
+
+        // 2. CeFi Untrusted Unknown Peer -> Must be rejected!
+        auto res2 = auth_cefi.authenticate_peer("UNKNOWN_ROGUE_PEER", nullptr, 0);
+        if (res2.authenticated) throw std::runtime_error("Unknown peer must be rejected by Bilateral Pinning!");
+
+        // 3. Web3 ML-DSA-65 Challenge Verification
+        finora::AuthManager auth_web3(finora::AuthMode::ML_DSA_65_VERIFY);
+        const char* challenge = "FINORA_CHALLENGE_NONCE_0xDEADBEEF";
+        auto sig = auth_web3.sign_challenge(reinterpret_cast<const uint8_t*>(challenge), std::strlen(challenge));
+        if (sig.size() != 3309) throw std::runtime_error("ML-DSA-65 signature size must be 3309 bytes");
+
+        auto res3 = auth_web3.authenticate_peer("VALIDATOR_NODE_01", sig.data(), sig.size(), reinterpret_cast<const uint8_t*>(challenge), std::strlen(challenge));
+        if (!res3.authenticated) throw std::runtime_error("Valid ML-DSA-65 signature verification failed");
+
+        // 4. Web3 Tampered Challenge -> MitM detection must fail!
+        const char* tampered = "FINORA_CHALLENGE_NONCE_0xTAMPERED";
+        auto res4 = auth_web3.authenticate_peer("VALIDATOR_NODE_01", sig.data(), sig.size(), reinterpret_cast<const uint8_t*>(tampered), std::strlen(tampered));
+        if (res4.authenticated) throw std::runtime_error("Tampered challenge must fail ML-DSA-65 verification!");
+    });
+
+    // Test 10: Pre-Condition Enforcement: ML-KEM-768 runs ONLY after successful authentication
+    run_test("Handshake Pre-Condition: ML-KEM-768 Decoupled After Auth", [&]() {
+        PqcEngine engine;
+
+        // Valid authenticated handshake -> KEM runs and metrics are decoupled
+        engine.establish_session(finora::AuthMode::BILATERAL_PINNING, "BIST_CORE_01");
+        const auto& metrics = engine.get_handshake_metrics();
+        if (!metrics.authenticated) throw std::runtime_error("Expected session to be authenticated");
+        if (metrics.kem_time_us <= 0.0) throw std::runtime_error("KEM time must be recorded separately");
+        if (metrics.auth_time_us <= 0.0) throw std::runtime_error("Auth time must be recorded separately");
+
+        // Untrusted peer -> Handshake MUST abort before KEM
+        bool caught_auth_error = false;
+        try {
+            engine.establish_session(finora::AuthMode::BILATERAL_PINNING, "UNTRUSTED_ATTACKER_ID");
+        } catch (const std::exception& e) {
+            caught_auth_error = true;
+        }
+        if (!caught_auth_error) throw std::runtime_error("Handshake must abort before ML-KEM when authentication fails!");
+    });
+
     std::cout << "\n===============================================================\n";
     std::cout << " SUMMARY: " << tests_passed << " / " << total_tests << " TESTS PASSED SUCCESSFULLY (100% COMPLIANCE)\n";
     std::cout << "===============================================================\n";
