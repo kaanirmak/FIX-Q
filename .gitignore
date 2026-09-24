@@ -1,9 +1,20 @@
-# Compiled binaries
+# Build artifacts & libraries
 bin/
+lib/
+build/
 *.o
 *.out
+*.dylib
+*.so
+*.a
+*.dSYM/
 
-# Logs
+# IDE & OS
+.DS_Store
+.vscode/
+.idea/
+
+# Logs & PIDs
 logs/
 *.log
 *.pid
@@ -18,3 +29,5 @@ cpu_cycles.json
 tail_latency.json
 uploaded_orders.txt
 fix_test_data.txt
+report.json
+test_out.txt

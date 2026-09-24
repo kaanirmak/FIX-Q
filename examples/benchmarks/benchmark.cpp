@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "../include/fix_utils.hpp"
+#include "finora/fix_utils.hpp"
 
 double measure_real_latency(int port, const std::string& fix_msg) {
     int sock = 0;
@@ -26,6 +26,13 @@ double measure_real_latency(int port, const std::string& fix_msg) {
         return -1.0;
     }
 
+    // Set socket timeout (2 seconds)
+    struct timeval tv;
+    tv.tv_sec = 2;
+    tv.tv_usec = 0;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof(tv));
+
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         close(sock);
         return -1.0;
@@ -35,8 +42,8 @@ double measure_real_latency(int port, const std::string& fix_msg) {
     
     send(sock, fix_msg.c_str(), fix_msg.length(), 0);
     
-    char buffer[1024] = {0};
-    int valread = read(sock, buffer, 1024);
+    char buffer[4096] = {0};
+    int valread = read(sock, buffer, sizeof(buffer) - 1);
     
     auto end = std::chrono::high_resolution_clock::now();
     close(sock);
@@ -78,32 +85,32 @@ int main(int argc, char* argv[]) {
     std::cout << "Running Real TCP FIX Benchmarks on " << orders.size() << " orders...\n";
 
     int invalid_count = 0;
+    int success_count = 0;
+
     for (const std::string& order : orders) {
         std::string validation_error;
         if (!fix::validate_message(order, validation_error)) {
             invalid_count++;
             if (invalid_count <= 5) {
                 std::cerr << "Benchmark WARNING: Invalid FIX message: " << validation_error << "\n";
-            } else if (invalid_count == 6) {
-                std::cerr << "Benchmark WARNING: Further invalid message warnings suppressed.\n";
             }
         }
 
         double tls_latency = measure_real_latency(5007, order);
         double pqc_latency = measure_real_latency(5006, order);
         
-        // If the proxies are not running or we get connection refused, 
-        // fallback to mathematical simulation based on academic averages for graceful UI degradation
-        if (tls_latency < 0) tls_latency = 0.5 + ((rand() % 100) / 1000.0);
-        if (pqc_latency < 0) pqc_latency = tls_latency + 0.15 + ((rand() % 50) / 1000.0);
-
-        tls_latencies.push_back(tls_latency);
-        pqc_latencies.push_back(pqc_latency);
+        // Pure real measurement: Only record if both tunnels answered
+        if (tls_latency >= 0.0 && pqc_latency >= 0.0) {
+            tls_latencies.push_back(tls_latency);
+            pqc_latencies.push_back(pqc_latency);
+            success_count++;
+        }
     }
 
-    int min_len = std::min(tls_latencies.size(), pqc_latencies.size());
-    if (min_len == 0) {
-        std::cerr << "Error: No valid results.\n";
+    std::cout << "Benchmark Complete: " << success_count << " / " << orders.size() << " real orders measured.\n";
+
+    if (tls_latencies.empty()) {
+        std::cerr << "Error: No valid measurements recorded. Please ensure TLS (5007) and PQC (5006) proxies are running.\n";
         return 1;
     }
 
@@ -111,20 +118,17 @@ int main(int argc, char* argv[]) {
     std::ofstream file("benchmark_results.csv");
     file << "Order_ID,TLS_1_3_ms,CPP_PQC_Tunnel_ms,CPP_Overhead_ms\n";
     
-    double sum_tls = 0, sum_pqc = 0;
     std::vector<double> sorted_tls = tls_latencies;
     std::vector<double> sorted_pqc = pqc_latencies;
 
-    for (int i = 0; i < min_len; i++) {
+    for (size_t i = 0; i < tls_latencies.size(); i++) {
         double tls = tls_latencies[i];
         double pqc = pqc_latencies[i];
-        sum_tls += tls;
-        sum_pqc += pqc;
         file << (i+1) << "," << tls << "," << pqc << "," << (pqc - tls) << "\n";
     }
     file.close();
 
-    // Sort for CDF
+    // Sort for CDF percentiles
     std::sort(sorted_tls.begin(), sorted_tls.end());
     std::sort(sorted_pqc.begin(), sorted_pqc.end());
 
@@ -151,14 +155,6 @@ int main(int argc, char* argv[]) {
               << "}\n";
     json_file.close();
 
-    double avg_tls = sum_tls / min_len;
-    double avg_pqc = sum_pqc / min_len;
-
-    std::cout << "\n--- C++ ACADEMIC BENCHMARK SUMMARY ---\n";
-    std::cout << "Total Successful Orders: " << min_len << "\n";
-    std::cout << "Mean Latency -> TLS: " << avg_tls << " ms | PQC: " << avg_pqc << " ms\n";
-    std::cout << "p99.9 Latency -> TLS: " << tls_p999 << " ms | PQC: " << pqc_p999 << " ms\n";
-    std::cout << "--------------------------------------\n";
-
+    std::cout << "Exported real measurements to benchmark_results.csv and tail_latency.json\n";
     return 0;
 }

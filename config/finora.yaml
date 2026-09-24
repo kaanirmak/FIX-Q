@@ -1,0 +1,39 @@
+version: "1.0"
+
+node:
+  id: "ist-core-gateway-01"
+  datacenter: "bist-equinix-dc"
+  role: "ingress-proxy"
+
+network:
+  listen_address: "127.0.0.1:5006"
+  target_upstream: "127.0.0.1:5003"
+  tcp_nodelay: true
+  quickack: true
+  so_busy_poll: 50
+  ring_buffer_entries: 65536
+
+crypto:
+  hybrid_mode: true
+  kem:
+    primary: "FIPS-203-ML-KEM-768"
+    classical: "X25519"
+  signature:
+    algorithm: "FIPS-204-ML-DSA-65"
+    verify_peer: true
+  symmetric:
+    cipher: "AES-256-GCM"
+    rekey_interval_messages: 1000000
+    rekey_interval_seconds: 3600
+
+protocols:
+  parser: "auto-detect"
+  fix:
+    strip_insecure_tags: false
+    validate_checksum: true
+    session_target_comp_id: "BORSA_IST"
+
+telemetry:
+  prometheus_endpoint: "0.0.0.0:9090"
+  tracing_sample_rate: 0.001
+  latency_percentiles: [0.50, 0.90, 0.99, 0.999]

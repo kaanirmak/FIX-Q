@@ -1,36 +1,50 @@
-#include "../include/tcp_server.hpp"
-#include "../include/logger.hpp"
+#include "finora/tcp_server.hpp"
+#include "finora/logger.hpp"
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <algorithm>
+#include <csignal>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
+static void bidirectional_forward(SSL* ssl, int ssl_fd, int plain_fd) {
+    fd_set read_fds;
+    char buffer[8192];
+    while (true) {
+        FD_ZERO(&read_fds);
+        FD_SET(ssl_fd, &read_fds);
+        FD_SET(plain_fd, &read_fds);
+        int max_fd = std::max(ssl_fd, plain_fd);
+
+        struct timeval tv;
+        tv.tv_sec = 4;
+        tv.tv_usec = 0;
+
+        int ret = select(max_fd + 1, &read_fds, NULL, NULL, &tv);
+        if (ret <= 0) break;
+
+        if (FD_ISSET(plain_fd, &read_fds)) {
+            ssize_t n = read(plain_fd, buffer, sizeof(buffer));
+            if (n <= 0) break;
+            if (SSL_write(ssl, buffer, n) <= 0) break;
+        }
+        if (FD_ISSET(ssl_fd, &read_fds)) {
+            int n = SSL_read(ssl, buffer, sizeof(buffer));
+            if (n <= 0) break;
+            if (write(plain_fd, buffer, n) <= 0) break;
+        }
+    }
+}
+
 class TlsDecryptServer : public TcpServer {
 private:
     SSL_CTX* server_ctx_;
-
-    static void proxy_tls_to_plain(SSL* ssl, int plain_fd) {
-        char buffer[4096];
-        while (true) {
-            int bytes_read = SSL_read(ssl, buffer, sizeof(buffer));
-            if (bytes_read <= 0) break;
-            write(plain_fd, buffer, bytes_read);
-        }
-    }
-
-    static void proxy_plain_to_tls(int plain_fd, SSL* ssl) {
-        char buffer[4096];
-        while (true) {
-            ssize_t bytes_read = read(plain_fd, buffer, sizeof(buffer));
-            if (bytes_read <= 0) break;
-            SSL_write(ssl, buffer, bytes_read);
-        }
-    }
 
 public:
     TlsDecryptServer(int port) : TcpServer(port, "TlsDecryptServer"), server_ctx_(nullptr) {
@@ -53,19 +67,14 @@ public:
     }
 
     void handle_client(int client_fd) override {
-        logger::log_info("TlsDecryptServer: Accepted incoming TLS connection.");
         SSL* ssl = SSL_new(server_ctx_);
         SSL_set_fd(ssl, client_fd);
 
         if (SSL_accept(ssl) <= 0) {
-            logger::log_error("TlsDecryptServer: SSL handshake failed.");
-            ERR_print_errors_fp(stderr);
             SSL_free(ssl);
             close(client_fd);
             return;
         }
-
-        logger::log_info("TlsDecryptServer: SSL handshake successful. Connecting upstream to BIST (Port 5003)...");
 
         int bist_fd = socket(AF_INET, SOCK_STREAM, 0);
         struct sockaddr_in serv_addr;
@@ -74,18 +83,13 @@ public:
         inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
 
         if (connect(bist_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-            logger::log_error("TlsDecryptServer: Failed upstream connection to BIST (5003).");
             SSL_free(ssl);
             close(client_fd);
             return;
         }
 
-        std::thread t1(proxy_tls_to_plain, ssl, bist_fd);
-        std::thread t2(proxy_plain_to_tls, bist_fd, ssl);
-        t1.join();
-        t2.join();
+        bidirectional_forward(ssl, client_fd, bist_fd);
 
-        logger::log_info("TlsDecryptServer: Closing client connections.");
         SSL_free(ssl);
         close(client_fd);
         close(bist_fd);
@@ -96,33 +100,13 @@ class TlsClientEntryServer : public TcpServer {
 private:
     SSL_CTX* client_ctx_;
 
-    static void proxy_plain_to_tls(int plain_fd, SSL* ssl) {
-        char buffer[4096];
-        while (true) {
-            ssize_t bytes_read = read(plain_fd, buffer, sizeof(buffer));
-            if (bytes_read <= 0) break;
-            SSL_write(ssl, buffer, bytes_read);
-        }
-        shutdown(plain_fd, SHUT_RD);
-    }
-
-    static void proxy_tls_to_plain(SSL* ssl, int plain_fd) {
-        char buffer[4096];
-        while (true) {
-            int bytes_read = SSL_read(ssl, buffer, sizeof(buffer));
-            if (bytes_read <= 0) break;
-            write(plain_fd, buffer, bytes_read);
-        }
-        shutdown(plain_fd, SHUT_WR);
-    }
-
 public:
     TlsClientEntryServer(int port) : TcpServer(port, "TlsClientEntryServer"), client_ctx_(nullptr) {
         client_ctx_ = SSL_CTX_new(TLS_client_method());
         if (!client_ctx_) {
             throw std::runtime_error("TlsClientEntryServer: Failed to create client SSL context");
         }
-        SSL_CTX_set_verify(client_ctx_, SSL_VERIFY_NONE, NULL); // bypass verification for localhost self-signed cert
+        SSL_CTX_set_verify(client_ctx_, SSL_VERIFY_NONE, NULL);
     }
 
     ~TlsClientEntryServer() override {
@@ -132,8 +116,6 @@ public:
     }
 
     void handle_client(int client_fd) override {
-        logger::log_info("TlsClientEntryServer: Accepted plaintext client connection. Establishing TLS tunnel to Port 5008...");
-
         int server_fd = socket(AF_INET, SOCK_STREAM, 0);
         struct sockaddr_in serv_addr;
         serv_addr.sin_family = AF_INET;
@@ -141,7 +123,6 @@ public:
         inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
 
         if (connect(server_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-            logger::log_error("TlsClientEntryServer: Failed upstream connection to TLS Server (5008)");
             close(client_fd);
             return;
         }
@@ -150,22 +131,14 @@ public:
         SSL_set_fd(ssl, server_fd);
 
         if (SSL_connect(ssl) <= 0) {
-            logger::log_error("TlsClientEntryServer: Upstream SSL handshake failed.");
-            ERR_print_errors_fp(stderr);
             SSL_free(ssl);
             close(server_fd);
             close(client_fd);
             return;
         }
 
-        logger::log_info("TlsClientEntryServer: Upstream SSL handshake successful. Tunnel opened.");
+        bidirectional_forward(ssl, server_fd, client_fd);
 
-        std::thread t1(proxy_plain_to_tls, client_fd, ssl);
-        std::thread t2(proxy_tls_to_plain, ssl, client_fd);
-        t1.join();
-        t2.join();
-
-        logger::log_info("TlsClientEntryServer: Tunnel closed.");
         SSL_free(ssl);
         close(client_fd);
         close(server_fd);
@@ -173,6 +146,7 @@ public:
 };
 
 int main() {
+    signal(SIGPIPE, SIG_IGN);
     logger::log_info("Starting C++ TLS Proxy Suite...");
 
     SSL_library_init();
@@ -180,7 +154,6 @@ int main() {
     SSL_load_error_strings();
 
     try {
-        // Start TlsDecryptServer on port 5008 in a background thread
         std::thread decrypt_thread([]() {
             try {
                 TlsDecryptServer decrypt_server(5008);
@@ -191,7 +164,6 @@ int main() {
         });
         decrypt_thread.detach();
 
-        // Start TlsClientEntryServer on port 5007 in the main thread loop
         TlsClientEntryServer entry_server(5007);
         entry_server.run();
     } catch (const std::exception& e) {
