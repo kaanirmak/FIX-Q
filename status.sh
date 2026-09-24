@@ -19,5 +19,4 @@ check_service() {
 check_service "mock_bist"
 check_service "pqc_proxy"
 check_service "tls_proxy"
-check_service "web_server"
 echo "======================================="

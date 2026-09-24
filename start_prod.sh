@@ -51,13 +51,11 @@ else
 fi
 ./bin/benchmark -f fix_test_data.txt
 
-# Start Web Server
-nohup ./bin/web_server > logs/web_server.log 2>&1 &
-echo $! > logs/web_server.pid
-
 echo "========================================="
 echo "Finora PQC HFT Production Services are RUNNING."
-echo "Web Interface: http://localhost:8080"
+echo "PQC Gateway Tunnel:  127.0.0.1:5006"
+echo "TLS Fallback Bridge: 127.0.0.1:5007 / 5008"
+echo "Matching Engine:     127.0.0.1:5003"
 echo "Logs are available in the logs/ directory."
 echo "Use ./status.sh to check running processes."
 echo "Use ./stop_prod.sh to gracefully shut down."

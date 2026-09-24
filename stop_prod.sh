@@ -16,12 +16,11 @@ kill_from_pid() {
     fi
 }
 
-kill_from_pid "web_server"
 kill_from_pid "tls_proxy"
 kill_from_pid "pqc_proxy"
 kill_from_pid "mock_bist"
 
 # Fallback killall just in case they were started manually without pid files
-killall web_server pqc_proxy tls_proxy mock_bist >/dev/null 2>&1
+killall pqc_proxy tls_proxy mock_bist >/dev/null 2>&1
 
 echo "All services successfully stopped."

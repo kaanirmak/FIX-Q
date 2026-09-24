@@ -71,11 +71,6 @@ endif()
 # Examples (optional)
 # ──────────────────────────────────────────────
 if(FINORA_BUILD_EXAMPLES)
-    # Demo Web Server + Testbed UI
-    add_executable(finora_demo_server examples/demo_server/web_server.cpp)
-    target_include_directories(finora_demo_server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
-    target_link_libraries(finora_demo_server PRIVATE finora_headers)
-
     # Mock Exchange (BIST simulator)
     add_executable(finora_mock_exchange examples/mock_exchange/mock_bist.cpp)
     target_link_libraries(finora_mock_exchange PRIVATE finora_headers)
@@ -86,6 +81,16 @@ if(FINORA_BUILD_EXAMPLES)
 
     add_executable(finora_micro_bench examples/benchmarks/micro_bench.cpp)
     target_link_libraries(finora_micro_bench PRIVATE finora_headers)
+
+    # Client Integration Examples
+    add_executable(finora_client_example_cpp examples/minimal_client/client_example.cpp)
+    target_link_libraries(finora_client_example_cpp PRIVATE finora_headers)
+
+    if(FINORA_BUILD_SHARED)
+        add_executable(finora_client_example_c examples/minimal_client/client_example.c)
+        target_include_directories(finora_client_example_c PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+        target_link_libraries(finora_client_example_c PRIVATE finora)
+    endif()
 endif()
 
 # ──────────────────────────────────────────────

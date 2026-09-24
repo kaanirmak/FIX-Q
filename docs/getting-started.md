@@ -92,9 +92,8 @@ This starts:
 1. **Mock Exchange** on port 5003 (simulated matching engine)
 2. **PQC Proxy** on port 5006 (quantum-safe tunnel)
 3. **TLS Proxy** on ports 5007/5008 (classical comparison)
-4. **Web Server** on port 8080 (interactive testbed UI)
 
-Open [http://localhost:8080](http://localhost:8080) to access the multi-protocol testbed.
+You can now connect client applications or run the benchmark harness against port 5006.
 
 ### Stop Services
 

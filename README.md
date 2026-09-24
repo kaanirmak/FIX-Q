@@ -253,9 +253,8 @@ target_link_libraries(your_app PRIVATE Finora::finora)
 # Start the PQC proxy (connects localhost:5006 → upstream:5003)
 ./build/finora_proxy
 
-# Or with examples: full demo environment
+# Or start background daemons (PQC proxy, TLS bridge, matching engine)
 ./scripts/start.sh
-# Open http://localhost:8080 for the interactive testbed
 ```
 
 ## 📐 Integration Guide
@@ -359,7 +358,7 @@ finora/
 │   ├── pqc_tool.cpp         # Encrypt/decrypt/sign CLI tool
 │   └── tls_proxy.cpp        # TLS 1.3 comparison proxy
 ├── examples/                # Integration examples
-│   ├── demo_server/         # Interactive web testbed
+│   ├── minimal_client/      # Minimal C and C++ client applications
 │   ├── mock_exchange/       # Simulated stock exchange
 │   └── benchmarks/          # Performance measurement tools
 ├── tests/                   # Test suite

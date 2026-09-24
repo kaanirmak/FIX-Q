@@ -29,9 +29,7 @@ LIB_DIR = lib
 CORE_TARGETS = $(LIB_DIR)/libfinora.$(SHLIB_EXT) $(BIN_DIR)/finora_proxy $(BIN_DIR)/pqc_proxy
 TOOL_TARGETS = $(BIN_DIR)/finora_pqc_tool $(BIN_DIR)/finora_tls_proxy $(BIN_DIR)/pqc_tool $(BIN_DIR)/tls_proxy
 TEST_TARGETS = $(BIN_DIR)/test_nist_kat
-EXAMPLE_TARGETS = $(BIN_DIR)/demo_server \
-                  $(BIN_DIR)/web_server \
-                  $(BIN_DIR)/mock_exchange \
+EXAMPLE_TARGETS = $(BIN_DIR)/mock_exchange \
                   $(BIN_DIR)/mock_bist \
                   $(BIN_DIR)/benchmark \
                   $(BIN_DIR)/micro_bench \
@@ -87,9 +85,6 @@ test_nist_kat: test
 # ─────────────────────────────────────────────────────────────
 # Examples & Benchmarks
 # ─────────────────────────────────────────────────────────────
-$(BIN_DIR)/demo_server: examples/demo_server/web_server.cpp
-	$(CXX) $(CXXFLAGS) -I./third_party $< -o $@ $(LDFLAGS)
-
 $(BIN_DIR)/mock_exchange: examples/mock_exchange/mock_bist.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LDFLAGS)
 
@@ -108,9 +103,6 @@ $(BIN_DIR)/client_example_c: examples/minimal_client/client_example.c $(LIB_DIR)
 # Compatibility Symlinks
 $(BIN_DIR)/pqc_proxy: $(BIN_DIR)/finora_proxy
 	@ln -sf finora_proxy $@
-
-$(BIN_DIR)/web_server: $(BIN_DIR)/demo_server
-	@ln -sf demo_server $@
 
 $(BIN_DIR)/mock_bist: $(BIN_DIR)/mock_exchange
 	@ln -sf mock_exchange $@
