@@ -1,0 +1,65 @@
+name: Finora CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build & Test (${{ matrix.os }} - ${{ matrix.compiler }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            compiler: gcc
+            cc: gcc
+            cxx: g++
+          - os: ubuntu-22.04
+            compiler: clang
+            cc: clang
+            cxx: clang++
+          - os: macos-14
+            compiler: apple-clang
+            cc: clang
+            cxx: clang++
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libssl-dev
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install openssl@3 cmake
+
+      - name: Build with CMake
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DFINORA_BUILD_EXAMPLES=ON \
+            -DFINORA_BUILD_TOOLS=ON \
+            -DFINORA_BUILD_TESTS=ON
+          cmake --build build -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
+
+      - name: Run Test Suite (NIST KAT)
+        run: |
+          ./build/finora_test_nist_kat
+
+      - name: Build with Makefile
+        run: |
+          make clean
+          make prod
+          ./bin/test_nist_kat
