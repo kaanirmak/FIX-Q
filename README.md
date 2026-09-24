@@ -57,19 +57,19 @@ Finora operates as a transparent, high-throughput L4/L7 cryptographic proxy and 
 ```mermaid
 flowchart TB
     subgraph Client["Client Application Layer (Zero Code Changes)"]
-        OMS["OMS / Algo Trading Engine<br/>(FIX 4.2 / 4.4 / 5.0SP2)"]
-        BANK["Core Banking Engine<br/>(ISO 20022 pacs.008 / SWIFT MX)"]
-        WEB3["Web3 / Node Gateway<br/>(EVM JSON-RPC / eth_sendRawTransaction)"]
+        OMS["OMS / Algo Trading Engine<br/>FIX 4.2 / 4.4 / 5.0SP2"]
+        BANK["Core Banking Engine<br/>ISO 20022 pacs.008 / SWIFT MX"]
+        WEB3["Web3 / Node Gateway<br/>EVM JSON-RPC / eth_sendRawTransaction"]
     end
 
     subgraph FinoraGateway["Finora PQC Framework (L4 / L7 Transparent Security Layer)"]
         subgraph Ingress["1. Ingress & Socket Optimization"]
-            SOCK["TCP Socket Layer<br/>(TCP_NODELAY | SO_BUSY_POLL | QuickACK)"]
-            RING["Lock-Free Ring Buffer<br/>(Zero-Allocation | 64B Cache-Line Aligned)"]
+            SOCK["TCP Socket Layer<br/>TCP_NODELAY | SO_BUSY_POLL | QuickACK"]
+            RING["Lock-Free Ring Buffer<br/>Zero-Allocation | 64B Cache-Line Aligned"]
         end
 
         subgraph Inspection["2. Zero-Copy Protocol Sniffer & Codec"]
-            CODEC{"Protocol Codec<br/>(Magic Byte Sniffing in < 5 ns)"}
+            CODEC{"Protocol Codec<br/>Magic Byte Sniffing under 5 ns"}
             P_FIX["FIX Parser & Checksum Validator"]
             P_OUCH["Nasdaq OUCH / ITCH Framer"]
             P_MX["ISO 20022 XML/JSON Validator"]
@@ -77,46 +77,50 @@ flowchart TB
         end
 
         subgraph Security["3. Cryptographic Core & State Guard"]
-            GUARD["Finora State Guard<br/>(64-bit Monotonic Seq & Anti-Replay Sliding Window)"]
-            HYBRID["Hybrid Key Exchange (RFC 8446)<br/>(NIST FIPS 203 ML-KEM-768 + Classical X25519)"]
-            KDF["HKDF-SHA256 Derivation<br/>(256-bit Session Key & Rekey Scheduler)"]
-            DSA["Identity & Authentication<br/>(NIST FIPS 204 ML-DSA-65 Lattice Signatures)"]
-            AEAD["Zero-Allocation AEAD Streaming<br/>(Hardware AES-256-GCM | 96-bit Counter Nonce)"]
+            GUARD["Finora State Guard<br/>64-bit Monotonic Seq & Anti-Replay Sliding Window"]
+            HYBRID["Hybrid Key Exchange (RFC 8446)<br/>NIST FIPS 203 ML-KEM-768 + Classical X25519"]
+            KDF["HKDF-SHA256 Derivation<br/>256-bit Session Key & Rekey Scheduler"]
+            DSA["Identity & Authentication<br/>NIST FIPS 204 ML-DSA-65 Lattice Signatures"]
+            AEAD["Zero-Allocation AEAD Streaming<br/>Hardware AES-256-GCM | 96-bit Counter Nonce"]
         end
 
         subgraph Wire["4. Wire Framing & Envelope Packing"]
-            ENVELOPE["Finora Wire Format Envelope<br/>(Magic 0x464E | 32-Byte Packed Header | 16-Byte Tag)"]
+            ENVELOPE["Finora Wire Format Envelope<br/>Magic 0x464E | 32-Byte Packed Header | 16-Byte Tag"]
         end
     end
 
     subgraph Upstream["Upstream Financial Network & Counterparties"]
-        EXCH["Stock Exchange / Matching Engine<br/>(Borsa Istanbul, CME, Nasdaq)"]
-        CLEARING["Interbank Settlement / RTGS<br/>(SWIFT Alliance, Federal Reserve, TARGET2)"]
+        EXCH["Stock Exchange / Matching Engine<br/>Borsa Istanbul, CME, Nasdaq"]
+        CLEARING["Interbank Settlement / RTGS<br/>SWIFT Alliance, Federal Reserve, TARGET2"]
         MEMPOOL["Blockchain Network / Validator Node"]
     end
 
-    OMS -->|"Plaintext TCP (localhost:5006)"| SOCK
-    BANK -->|"Plaintext TCP (localhost:5006)"| SOCK
-    WEB3 -->|"Plaintext TCP (localhost:5006)"| SOCK
+    OMS -->|Plaintext TCP port 5006| SOCK
+    BANK -->|Plaintext TCP port 5006| SOCK
+    WEB3 -->|Plaintext TCP port 5006| SOCK
 
     SOCK --> RING
     RING --> CODEC
 
-    CODEC -->|"Magic '8=FIX.'"| P_FIX
-    CODEC -->|"Binary 0x53 / OUCH"| P_OUCH
-    CODEC -->|"XML '<Doc' / 'urn:iso'"| P_MX
-    CODEC -->|"JSON '{\"jsonrpc\"'"| P_RPC
+    CODEC -->|Magic 8=FIX.| P_FIX
+    CODEC -->|Binary 0x53 / OUCH| P_OUCH
+    CODEC -->|XML Doc / ISO 20022| P_MX
+    CODEC -->|JSON-RPC Payload| P_RPC
 
-    P_FIX & P_OUCH & P_MX & P_RPC --> GUARD
+    P_FIX --> GUARD
+    P_OUCH --> GUARD
+    P_MX --> GUARD
+    P_RPC --> GUARD
+
     GUARD --> HYBRID
     HYBRID --> KDF
     KDF --> AEAD
-    DSA -.->|"Mutual Peer Auth"| ENVELOPE
+    DSA -.->|Mutual Peer Auth| ENVELOPE
     AEAD --> ENVELOPE
 
-    ENVELOPE -->|"Quantum-Safe Wire Tunnel (Port 5003/Remote)"| EXCH
-    ENVELOPE -->|"Quantum-Safe Wire Tunnel"| CLEARING
-    ENVELOPE -->|"Quantum-Safe Wire Tunnel"| MEMPOOL
+    ENVELOPE -->|Quantum-Safe Wire Tunnel| EXCH
+    ENVELOPE -->|Quantum-Safe Wire Tunnel| CLEARING
+    ENVELOPE -->|Quantum-Safe Wire Tunnel| MEMPOOL
 
     classDef clientStyle fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
     classDef finoraStyle fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#f8fafc;
@@ -172,7 +176,7 @@ sequenceDiagram
     Proxy->>Wire: ClientHello [X25519 Ephemeral PubKey (32B) + Client Nonce]
     Wire->>Proxy: ServerHello [ML-KEM-768 Ciphertext (1088B) + Server X25519 PubKey + ML-DSA-65 Signature]
     Proxy->>Proxy: Verify ML-DSA-65 Signature & Decapsulate ML-KEM-768
-    Proxy->>Proxy: Derive Master Key via HKDF-SHA256 (X25519_SS || MLKEM768_SS)
+    Proxy->>Proxy: Derive Master Key via HKDF-SHA256 (X25519_SS + MLKEM768_SS)
 
     Note over App,Wire: Phase 2: Zero-Allocation Streaming Hot-Path (Fixed 48B Overhead)
     App->>Proxy: Raw FIX Order (e.g. 35=D NewOrderSingle) via localhost:5006
