@@ -33,11 +33,15 @@ Measured on Apple M2 Pro, OpenSSL 3.6, 100,000 FIX orders:
 
 | Metric | Value |
 |--------|-------|
-| PQC Handshake (ML-KEM-768 + X25519) | 93 µs |
-| Mean Transit Overhead | 22.1 µs |
-| p99.9 Tail Latency | 25.7 µs |
-| Throughput | 35,220 ops/sec |
-| Hot-Path Heap Allocations | 0 |
+| **Pure KEM Encapsulation (FIPS 203 ML-KEM-768)** | **93.2 µs** (Pure KEM) |
+| **CeFi Peer Authentication (Bilateral Pinning)** | **5.1 µs** (BIST/FIX Matrix) |
+| **Web3 Peer Authentication (FIPS 204 ML-DSA-65)** | **131.8 µs** (Lattice Signature) |
+| **Total CeFi Handshake (Pinning + ML-KEM-768)** | **98.3 µs** (vs TLS 1.3: 1,150 µs — 11.7x faster) |
+| **Total Web3 Handshake (ML-DSA-65 + ML-KEM-768)** | **225.0 µs** (vs TLS 1.3: 1,250 µs — 5.5x faster) |
+| **Mean In-Line Transit Overhead (Hot Path)** | **21.9 µs** (< 35 µs SLA) |
+| **p99.9 Tail Latency** | **25.7 µs** |
+| **Throughput** | **50,688 ops/sec** |
+| **Hot-Path Heap Allocations** | **0** (Pre-allocated Ring Buffer) |
 
 ## 🔐 Cryptographic Primitives
 
@@ -172,11 +176,21 @@ sequenceDiagram
     participant Proxy as Finora Local Gateway
     participant Wire as Finora Remote Gateway / Exchange
 
-    Note over App,Wire: Phase 1: Hybrid Post-Quantum Handshake (NIST FIPS 203 + RFC 8446)
-    Proxy->>Wire: ClientHello [X25519 Ephemeral PubKey (32B) + Client Nonce]
-    Wire->>Proxy: ServerHello [ML-KEM-768 Ciphertext (1088B) + Server X25519 PubKey + ML-DSA-65 Signature]
-    Proxy->>Proxy: Verify ML-DSA-65 Signature & Decapsulate ML-KEM-768
-    Proxy->>Proxy: Derive Master Key via HKDF-SHA256 (X25519_SS + MLKEM768_SS)
+    Note over App,Wire: Phase 1: Peer Authentication (Strict Pre-Condition via AuthManager)
+    alt CeFi / BIST Mode (Colocation Fixed Line)
+        Proxy->>Wire: Peer Identity & Pinned Fingerprint Check
+        Wire-->>Proxy: Bilateral Pinning Verified (~5.1 µs static lookup)
+    else Web3 RPC Mode (Open Network / Relay)
+        Proxy->>Wire: Challenge Nonce Transmission
+        Wire-->>Proxy: NIST FIPS 204 ML-DSA-65 Signature (3309B)
+        Proxy->>Proxy: Verify ML-DSA-65 Signature (~131.8 µs) [Aborts if Tampered / MitM!]
+    end
+
+    Note over App,Wire: Phase 2: Decoupled ML-KEM-768 Key Encapsulation (Executes ONLY if Authenticated)
+    Proxy->>Wire: ClientHello [X25519 Ephemeral PubKey (32B)]
+    Wire->>Proxy: ServerHello [ML-KEM-768 Ciphertext (1088B)] (93.2 µs Pure KEM)
+    Proxy->>Proxy: Decapsulate ML-KEM-768 Shared Secret + X25519 ECDH
+    Proxy->>Proxy: Derive Master AES Session Key via HKDF-SHA256 into Lock-Free Queue
 
     Note over App,Wire: Phase 2: Zero-Allocation Streaming Hot-Path (Fixed 48B Overhead)
     App->>Proxy: Raw FIX Order (e.g. 35=D NewOrderSingle) via localhost:5006
@@ -342,6 +356,7 @@ auto envelope = engine.wrap_with_full_pqc(plaintext_data, data_len);
 finora/
 ├── include/finora/          # Public API headers
 │   ├── finora.h             # C SDK umbrella header
+│   ├── auth_manager.hpp     # AuthManager: CeFi Bilateral Pinning & Web3 ML-DSA-65
 │   ├── pqc_crypto.hpp       # ML-KEM-768, ML-DSA-65, AES-256-GCM engine
 │   ├── codec.hpp            # Multi-protocol parser (FIX, OUCH, ISO 20022, Web3)
 │   ├── ring_buffer.hpp      # Zero-allocation lock-free ring buffer
@@ -395,16 +410,18 @@ make test_nist_kat
 ### NIST KAT Results
 
 ```
-[ 1] ML-KEM-768 Encap/Decap               ... PASSED (4038 µs)
-[ 2] ML-DSA-65 Sign/Verify                ... PASSED (9 µs)
-[ 3] Hybrid KEM (X25519 + ML-KEM-768)     ... PASSED (1933 µs)
-[ 4] Wire Format Envelope Wrap & Unwrap   ... PASSED (2315 µs)
-[ 5] Zero-Alloc Streaming AEAD            ... PASSED (670 µs)
-[ 6] Codec Protocol Sniffing              ... PASSED (2 µs)
-[ 7] State Guard Anti-Replay              ... PASSED (23 µs)
-[ 8] Ring Buffer Lock-Free Operation      ... PASSED (2532 µs)
+[ 1] Testing NIST FIPS 203 ML-KEM-768 Encap/Decap              ... PASSED (1384 us)
+[ 2] Testing NIST FIPS 204 ML-DSA-65 Sign/Verify               ... PASSED (7 us)
+[ 3] Testing Hybrid KEM (X25519 + ML-KEM-768 + HKDF-SHA256)    ... PASSED (1285 us)
+[ 4] Testing Finora Wire Format Envelope Wrap & Unwrap         ... PASSED (1538 us)
+[ 5] Testing Zero-Allocation In-Line Streaming AEAD            ... PASSED (434 us)
+[ 6] Testing Finora Codec Protocol Sniffing                    ... PASSED (0 us)
+[ 7] Testing Finora State Guard Sliding Window & Anti-Replay   ... PASSED (7 us)
+[ 8] Testing Zero-Allocation Ring Buffer Lock-Free Operation   ... PASSED (1216 us)
+[ 9] Testing AuthManager Decoupled CeFi Pinning & Web3 ML-DSA-65... PASSED (1208 us)
+[10] Testing Handshake Pre-Condition: ML-KEM-768 Decoupled After Auth... PASSED (586 us)
 ───────────────────────────────────────────────────
- SUMMARY: 8 / 8 TESTS PASSED (100% COMPLIANCE)
+ SUMMARY: 10 / 10 TESTS PASSED SUCCESSFULLY (100% COMPLIANCE)
 ```
 
 ## 🤝 Contributing

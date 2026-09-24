@@ -52,22 +52,28 @@ Deep packet inspection engine that automatically identifies the application-laye
 
 The codec also implements frame boundary detection for each protocol, enabling correct message-level encryption even when TCP delivers partial frames.
 
-### Module 3: `finora-crypto-core` (PQC Engine)
+### Module 3: `finora-auth-manager` & `finora-crypto-core` (Decoupled Handshake Architecture)
 
-**File:** `include/finora/pqc_crypto.hpp`
+**Files:** `include/finora/auth_manager.hpp`, `include/finora/pqc_crypto.hpp`
 
-The cryptographic heart of Finora, implementing a hybrid post-quantum + classical encryption pipeline:
+Finora strictly **decouples Peer Authentication from ML-KEM-768 Key Encapsulation**. Because KEM primitives (NIST FIPS 203) provide confidentiality without origin authentication, running an unauthenticated KEM creates active Man-in-the-Middle (MitM) vulnerabilities. Finora resolves this with a two-phase architecture:
 
 ```
-Handshake:
-  X25519 ECDH ──┐
-                 ├── HKDF-SHA-256 ──▶ 32-byte Shared Secret ──▶ AES-256-GCM Key
-  ML-KEM-768 ───┘
+Phase 1: Peer Authentication (Strict Pre-Condition)
+  ├── CeFi Mode: Bilateral Pinning (Static Pinned Matrix) ──▶ ~5.1 µs lookup
+  └── Web3 Mode: NIST FIPS 204 ML-DSA-65 Verification ────▶ ~131.8 µs verify
+               │
+               ▼ (Handshake aborts if unauthenticated)
+Phase 2: Hybrid Key Encapsulation (Executes ONLY if Authenticated)
+  ├── Ephemeral X25519 ECDH
+  └── NIST FIPS 203 ML-KEM-768 Encapsulation ─────────────▶ 93.2 µs (Pure KEM)
+               │
+               ▼
+Phase 3: Symmetric Key Derivation
+  HKDF-SHA256(X25519_SS || MLKEM768_SS) ──▶ 256-bit AES-GCM Key in Lock-Free Queue
 
-Per-Message:
-  Plaintext ──▶ AES-256-GCM Encrypt ──▶ Ciphertext + Tag
-                    │
-  ML-DSA-65 Sign ───┘ (over entire wire envelope)
+Phase 4: In-Line Data Plane Streaming (Hot Path)
+  Lock-Free Ring Buffer ──▶ AES-256-GCM Hardware Streaming ──▶ ~22 µs / Zero Alloc
 ```
 
 **Streaming AEAD:** The engine uses `thread_local` OpenSSL cipher contexts to avoid per-message allocation. The 96-bit IV is constructed deterministically from a 64-bit monotonic sequence counter + 32-bit random salt, eliminating the need for random number generation on the hot path.

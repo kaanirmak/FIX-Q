@@ -160,6 +160,32 @@ int main(void) {
 
 For low-latency C++ engines requiring direct access to protocol sniffers, lock-free ring buffers, and post-quantum cryptographic primitives.
 
+### Namespace: `finora`
+
+#### `AuthManager` (`finora/auth_manager.hpp`)
+Decoupled peer authentication engine supporting both high-frequency trading colocation static pinning and dynamic lattice signature verification. Mandated as a strict pre-condition before ML-KEM-768 execution.
+
+```cpp
+#include <finora/auth_manager.hpp>
+
+// Mode 1: CeFi Bilateral Pinning (BIST, FIX, ISO 20022 Colocation)
+finora::AuthManager auth_cefi(finora::AuthMode::BILATERAL_PINNING);
+auto res1 = auth_cefi.authenticate_peer("BIST_CORE_01", nullptr, 0);
+if (res1.authenticated) {
+    // Verified in ~5.1 µs via constant-time pre-shared pinned peer matrix
+}
+
+// Mode 2: Web3 ML-DSA-65 Verification (Dynamic RPC, MEV Relays)
+finora::AuthManager auth_web3(finora::AuthMode::ML_DSA_65_VERIFY);
+auto sig = auth_web3.sign_challenge(challenge_nonce, 32);
+auto res2 = auth_web3.authenticate_peer("RPC_VALIDATOR_01", sig.data(), sig.size(), challenge_nonce, 32);
+if (res2.authenticated) {
+    // Verified in ~131.8 µs via NIST FIPS 204 ML-DSA-65 lattice signature
+}
+```
+
+---
+
 ### Namespace: `finora::pqc`
 
 #### `PQCCryptoEngine` (`finora/pqc_crypto.hpp`)
