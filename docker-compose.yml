@@ -66,8 +66,8 @@ services:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_ANALYTICS_CHECK_FOR_UPDATES=false
     volumes:
-      - ./monitoring/provisioning/datasources/prometheus.docker.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
-      - ./monitoring/provisioning/dashboards/dashboards.docker.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+      - ./monitoring/docker/datasources/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ./monitoring/docker/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
       - ./monitoring/dashboards:/etc/grafana/dashboards:ro
     depends_on:
       - prometheus

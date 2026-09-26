@@ -59,41 +59,41 @@ class MetricsRegistry:
         # Gauges
         self.throughput_tps = {"borsa": 0.0, "banking": 0.0, "web3": 0.0}
         self.latencies = {
-            ("borsa", "p50", "tls"): 0.12,
-            ("borsa", "p90", "tls"): 0.18,
-            ("borsa", "p99", "tls"): 0.32,
-            ("borsa", "p999", "tls"): 0.55,
-            ("borsa", "p50", "pqc"): 0.32,
-            ("borsa", "p90", "pqc"): 0.45,
-            ("borsa", "p99", "pqc"): 0.72,
-            ("borsa", "p999", "pqc"): 1.15,
+            ("borsa", "p50", "tls"): 0.0,
+            ("borsa", "p90", "tls"): 0.0,
+            ("borsa", "p99", "tls"): 0.0,
+            ("borsa", "p999", "tls"): 0.0,
+            ("borsa", "p50", "pqc"): 0.0,
+            ("borsa", "p90", "pqc"): 0.0,
+            ("borsa", "p99", "pqc"): 0.0,
+            ("borsa", "p999", "pqc"): 0.0,
             
-            ("banking", "p50", "tls"): 0.16,
-            ("banking", "p90", "tls"): 0.24,
-            ("banking", "p99", "tls"): 0.42,
-            ("banking", "p999", "tls"): 0.68,
-            ("banking", "p50", "pqc"): 0.41,
-            ("banking", "p90", "pqc"): 0.58,
-            ("banking", "p99", "pqc"): 0.88,
-            ("banking", "p999", "pqc"): 1.35,
+            ("banking", "p50", "tls"): 0.0,
+            ("banking", "p90", "tls"): 0.0,
+            ("banking", "p99", "tls"): 0.0,
+            ("banking", "p999", "tls"): 0.0,
+            ("banking", "p50", "pqc"): 0.0,
+            ("banking", "p90", "pqc"): 0.0,
+            ("banking", "p99", "pqc"): 0.0,
+            ("banking", "p999", "pqc"): 0.0,
             
-            ("web3", "p50", "tls"): 0.18,
-            ("web3", "p90", "tls"): 0.28,
-            ("web3", "p99", "tls"): 0.49,
-            ("web3", "p999", "tls"): 0.78,
-            ("web3", "p50", "pqc"): 0.46,
-            ("web3", "p90", "pqc"): 0.65,
-            ("web3", "p99", "pqc"): 0.98,
-            ("web3", "p999", "pqc"): 1.48,
+            ("web3", "p50", "tls"): 0.0,
+            ("web3", "p90", "tls"): 0.0,
+            ("web3", "p99", "tls"): 0.0,
+            ("web3", "p999", "tls"): 0.0,
+            ("web3", "p50", "pqc"): 0.0,
+            ("web3", "p90", "pqc"): 0.0,
+            ("web3", "p99", "pqc"): 0.0,
+            ("web3", "p999", "pqc"): 0.0,
 
-            ("all", "p50", "tls"): 0.14,
-            ("all", "p90", "tls"): 0.22,
-            ("all", "p99", "tls"): 0.41,
-            ("all", "p999", "tls"): 0.65,
-            ("all", "p50", "pqc"): 0.38,
-            ("all", "p90", "pqc"): 0.54,
-            ("all", "p99", "pqc"): 0.85,
-            ("all", "p999", "pqc"): 1.32,
+            ("all", "p50", "tls"): 0.0,
+            ("all", "p90", "tls"): 0.0,
+            ("all", "p99", "tls"): 0.0,
+            ("all", "p999", "tls"): 0.0,
+            ("all", "p50", "pqc"): 0.0,
+            ("all", "p90", "pqc"): 0.0,
+            ("all", "p99", "pqc"): 0.0,
+            ("all", "p999", "pqc"): 0.0,
         }
         
         # 1-Time Session Handshake Metrics (Logon & KEM Exchange Setup Cost)
@@ -103,7 +103,7 @@ class MetricsRegistry:
         }
         
         # Borsa specific
-        self.borsa_matching_latency_us = 42.0
+        self.borsa_matching_latency_us = 0.0
         self.borsa_symbols = {sym: 0 for sym in self.bist_quotes.keys()}
         self.borsa_order_types = {"Limit": 0, "Market": 0, "StopLoss": 0, "Iceberg": 0}
         
@@ -701,12 +701,16 @@ def run_test_worker(domain, target_tps, duration_sec=0, security_mode="both", co
             "domain": domain,
             "orders": metrics.active_test["orders_sent"],
             "duration": round(time.time() - start_time, 1),
-            "p50_pqc": metrics.latencies.get((active_dom, "p50", "pqc"), 3.1),
-            "p99_pqc": metrics.latencies.get((active_dom, "p99", "pqc"), 7.2),
-            "p50_tls": metrics.latencies.get((active_dom, "p50", "tls"), 1.0),
-            "p99_tls": metrics.latencies.get((active_dom, "p99", "tls"), 3.5),
+            "p50_pqc": metrics.latencies.get((active_dom, "p50", "pqc"), 0.0),
+            "p99_pqc": metrics.latencies.get((active_dom, "p99", "pqc"), 0.0),
+            "p50_tls": metrics.latencies.get((active_dom, "p50", "tls"), 0.0),
+            "p99_tls": metrics.latencies.get((active_dom, "p99", "tls"), 0.0),
         }
         metrics.test_history.appendleft(summary)
+        # Reset live active latencies to 0.0 when test is stopped / idle
+        for k in metrics.latencies.keys():
+            metrics.latencies[k] = 0.0
+        metrics.borsa_matching_latency_us = 0.0
         metrics.active_test = None
         
     metrics.add_event(domain, "TEST_COMPLETE", 
@@ -2183,16 +2187,18 @@ class TestEngineServer(BaseHTTPRequestHandler):
         lines.append("# HELP fixq_latency_ms Latency percentiles in milliseconds")
         lines.append("# TYPE fixq_latency_ms gauge")
         with metrics.lock:
+            is_active = (metrics.active_test is not None) and (sum(metrics.throughput_tps.values()) > 0.01)
             for (dom, pct, sec), val in metrics.latencies.items():
-                lines.append(f'fixq_latency_ms{{domain="{dom}",metric="{pct}",security="{sec}"}} {val}')
+                out_val = val if is_active else 0.0
+                lines.append(f'fixq_latency_ms{{domain="{dom}",metric="{pct}",security="{sec}"}} {out_val}')
 
         # Dedicated Head-to-Head Latency Grand Prix Metrics (Pure Zero-Handshake Execution)
         lines.append("# HELP fixq_total_latency_ms Total end-to-end latency in milliseconds for race comparison")
         lines.append("# TYPE fixq_total_latency_ms gauge")
         with metrics.lock:
             for d in ["all", "borsa", "banking", "web3"]:
-                p50_tls = metrics.latencies.get((d, "p50", "tls"), 0.12)
-                p50_pqc = metrics.latencies.get((d, "p50", "pqc"), 0.38)
+                p50_tls = metrics.latencies.get((d, "p50", "tls"), 0.0) if is_active else 0.0
+                p50_pqc = metrics.latencies.get((d, "p50", "pqc"), 0.0) if is_active else 0.0
                 lines.append(f'fixq_total_latency_ms{{domain="{d}",security="classical_tls",protocol="TLS_1.3"}} {p50_tls}')
                 lines.append(f'fixq_total_latency_ms{{domain="{d}",security="quantum_pqc",protocol="FIPS_PQC"}} {p50_pqc}')
 
@@ -2200,18 +2206,18 @@ class TestEngineServer(BaseHTTPRequestHandler):
         lines.append("# TYPE fixq_latency_overhead_delta_ms gauge")
         with metrics.lock:
             for d in ["all", "borsa", "banking", "web3"]:
-                p50_tls = metrics.latencies.get((d, "p50", "tls"), 0.12)
-                p50_pqc = metrics.latencies.get((d, "p50", "pqc"), 0.38)
-                delta = round(max(0.0, p50_pqc - p50_tls), 2)
+                p50_tls = metrics.latencies.get((d, "p50", "tls"), 0.0) if is_active else 0.0
+                p50_pqc = metrics.latencies.get((d, "p50", "pqc"), 0.0) if is_active else 0.0
+                delta = round(max(0.0, p50_pqc - p50_tls), 2) if is_active and (p50_pqc > 0 and p50_tls > 0) else 0.0
                 lines.append(f'fixq_latency_overhead_delta_ms{{domain="{d}"}} {delta}')
 
         lines.append("# HELP fixq_latency_ratio Ratio of PQC latency to Classical latency")
         lines.append("# TYPE fixq_latency_ratio gauge")
         with metrics.lock:
             for d in ["all", "borsa", "banking", "web3"]:
-                p50_tls = metrics.latencies.get((d, "p50", "tls"), 0.12)
-                p50_pqc = metrics.latencies.get((d, "p50", "pqc"), 0.38)
-                ratio = round(p50_pqc / max(0.01, p50_tls), 2)
+                p50_tls = metrics.latencies.get((d, "p50", "tls"), 0.0) if is_active else 0.0
+                p50_pqc = metrics.latencies.get((d, "p50", "pqc"), 0.0) if is_active else 0.0
+                ratio = round(p50_pqc / max(0.01, p50_tls), 2) if is_active and (p50_pqc > 0 and p50_tls > 0) else 0.0
                 lines.append(f'fixq_latency_ratio{{domain="{d}"}} {ratio}')
 
         # 1-Time Session Handshake & Connection Metrics
@@ -2247,7 +2253,8 @@ class TestEngineServer(BaseHTTPRequestHandler):
 
         lines.append("# HELP fixq_borsa_matching_latency_us Borsa matching engine execution latency")
         lines.append("# TYPE fixq_borsa_matching_latency_us gauge")
-        lines.append(f'fixq_borsa_matching_latency_us {metrics.borsa_matching_latency_us}')
+        matching_lat = metrics.borsa_matching_latency_us if is_active else 0.0
+        lines.append(f'fixq_borsa_matching_latency_us {matching_lat}')
 
         lines.append("# HELP fixq_borsa_symbol_volume_total Trading volume per symbol")
         lines.append("# TYPE fixq_borsa_symbol_volume_total counter")
