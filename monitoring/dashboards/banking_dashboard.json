@@ -1,0 +1,255 @@
+{
+  "id": null,
+  "uid": "fixq-banking",
+  "title": "🏦 FINORA-Q Bankacılık Test Dashboard (Core Banking & FX Interbank)",
+  "tags": ["finora-q", "banking", "bankacilik", "fx", "aml", "pqc"],
+  "timezone": "browser",
+  "refresh": "2s",
+  "schemaVersion": 38,
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "gridPos": { "h": 4, "w": 5, "x": 0, "y": 0 },
+      "type": "stat",
+      "title": "Banking Throughput (TPS)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_throughput_tps{domain=\"banking\"}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "green", "value": 30 },
+              { "color": "purple", "value": 150 }
+            ]
+          },
+          "unit": "reqps"
+        }
+      },
+      "options": { "colorMode": "value", "graphMode": "area" }
+    },
+    {
+      "id": 2,
+      "gridPos": { "h": 4, "w": 5, "x": 5, "y": 0 },
+      "type": "stat",
+      "title": "Total Banking Operations",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "sum(fixq_orders_total{domain=\"banking\"})",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "locale"
+        }
+      },
+      "options": { "colorMode": "background", "graphMode": "area" }
+    },
+    {
+      "id": 3,
+      "gridPos": { "h": 4, "w": 5, "x": 10, "y": 0 },
+      "type": "stat",
+      "title": "AML & Fraud Check Latency",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_banking_aml_check_latency_ms",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 2.5 },
+              { "color": "red", "value": 5.0 }
+            ]
+          },
+          "unit": "ms"
+        }
+      },
+      "options": { "colorMode": "value", "graphMode": "area" }
+    },
+    {
+      "id": 4,
+      "gridPos": { "h": 4, "w": 5, "x": 15, "y": 0 },
+      "type": "stat",
+      "title": "PQC ML-DSA-65 Audit Sign Time",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_banking_pqc_signature_latency_us",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "blue", "value": 150 },
+              { "color": "orange", "value": 400 }
+            ]
+          },
+          "unit": "µs"
+        }
+      },
+      "options": { "colorMode": "value", "graphMode": "area" }
+    },
+    {
+      "id": 5,
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 0 },
+      "type": "stat",
+      "title": "Settlement & Clearing Latency",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_banking_settlement_latency_ms",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "options": { "colorMode": "background", "graphMode": "area" }
+    },
+    {
+      "id": 6,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "type": "timeseries",
+      "title": "FX & Interbank Transaction Latencies (P50, P90, P99)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"banking\", security=\"tls\"}",
+          "legendFormat": "TLS {{metric}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"banking\", security=\"pqc\"}",
+          "legendFormat": "PQC {{metric}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15
+          },
+          "unit": "ms"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "type": "timeseries",
+      "title": "Live FX Spreads (bps)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_banking_fx_spread_bps",
+          "legendFormat": "{{pair}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2
+          },
+          "unit": "short"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "gridPos": { "h": 7, "w": 8, "x": 0, "y": 12 },
+      "type": "piechart",
+      "title": "AML Compliance Status Evaluation",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_banking_compliance_status_total",
+          "legendFormat": "{{status}}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right" },
+        "pieType": "donut",
+        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 9,
+      "gridPos": { "h": 7, "w": 8, "x": 8, "y": 12 },
+      "type": "bargauge",
+      "title": "Currency Distribution (TRY / USD / EUR / GBP)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_banking_volume_total",
+          "legendFormat": "{{currency}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "locale"
+        }
+      },
+      "options": { "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 10,
+      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 12 },
+      "type": "bargauge",
+      "title": "PQC Security Audit Compliance (ML-DSA vs Classical ECDSA)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_crypto_overhead_ms{domain=\"banking\"}",
+          "legendFormat": "{{algorithm}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "ms"
+        }
+      },
+      "options": { "orientation": "vertical", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+    "type": "datasource",
+    "name": "OpenTSDB",
+    "id": "opentsdb",
+    "category": "tsdb",
+    "executable": "gpx_grafana-opentsdb-datasource",
+    "metrics": true,
+    "annotations": true,
+    "alerting": true,
+    "backend": true,
+    "info": {
+        "description": "Open source time series database",
+        "author": {
+            "name": "Grafana Labs",
+            "url": "https://grafana.com"
+        },
+        "keywords": [
+            "opentsdb",
+            "datasource",
+            "time series"
+        ],
+        "logos": {
+            "small": "img/opentsdb_logo.png",
+            "large": "img/opentsdb_logo.png"
+        },
+        "links": [
+            {
+                "name": "Raise issue",
+                "url": "https://github.com/grafana/grafana-opentsdb-datasource/issues/new"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://grafana.com/docs/grafana/latest/datasources/opentsdb/"
+            }
+        ],
+        "version": "13.0.3",
+        "updated": "2026-09-10"
+    },
+    "dependencies": {
+        "grafanaDependency": ">=12.3.0-0",
+        "plugins": []
+    },
+    "buildMode": "production"
+}

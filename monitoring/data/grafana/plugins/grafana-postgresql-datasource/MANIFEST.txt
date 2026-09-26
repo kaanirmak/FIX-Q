@@ -1,0 +1,39 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "grafana",
+  "signedByOrg": "grafana",
+  "signedByOrgName": "Grafana Labs",
+  "plugin": "grafana-postgresql-datasource",
+  "version": "13.0.3",
+  "time": 1788883354279,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "sql-query-editor.js.map": "fda272462d83ab3d447c1a33ed08c2ccb9f64ad231b17507ac2334014adc5ef7",
+    "LICENSE": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
+    "CHANGELOG.md": "7540ea15aed308280c0531c930db6d428bd24dbfe3bedfcd9b25c988991d23c0",
+    "156.js.map": "38afa08f2f4d44f8b6bf07f1b4dd3736cf0465e68b503105e4580b291970fd32",
+    "plugin.json": "c90fcb2bf812fb8a7da086ce6276a3de8a8fb04c6af03f57f2a8839890c20b5e",
+    "gpx_grafana_postgresql_datasource_darwin_arm64": "540ad56f4e604c3b7f7a309df11c8e3849429c4efe011a5b03435b828bc90e40",
+    "img/postgresql_logo.svg": "dc3100e92744f29bb331dbd00ea4a1da6aa603aaa726b994a47a1cf80f3387be",
+    "module.js.LICENSE.txt": "5f8c7a54980853e89db8f42f29cf29c65704398d93e72eeddc2bad0b21813c62",
+    "156.js": "1768faa0b5deb4aa791e429bb8d43fafdfd6666ea068740b429f51e5bceb6f2a",
+    "go_plugin_build_manifest": "b3386a7458df8dec5055723de0a42618037c1789284cbd2b6128204bb55dd75c",
+    "sql-query-editor.js": "a3441a562a3ca2f94851319f7ea8ff5e4aa4ffeae1d55dc78f6d61019313ff86",
+    "README.md": "81880bcd86dc72f6bd848ae81d8860ee2dc6666bfa4cdd28e0d5523871032efa",
+    "module.js.map": "b09ea15667ca3131e28b8a5da950af0a397ed41454bda8b3ea31c45ccf7f884a",
+    "module.js": "53b6611d32d602c77d830d1e7ab273f01f13b6cc8407b6df93361f37fdea8993"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+
+wsA/BAETCgBtBYJqoDGaCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JnmrUu9XVLVKz2dIPN/gqmCbp6jE0yXt8X+Vo5
+uPyJfm0WIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAxNUCCQHYm8YOb/o3Dsp2
+0/oSNcFK2wioHS7wqdwcw3vgDp+doNRl/a8WvVXgzGzu6RGu6ujKi6qQ+Vk+
+a5//2ZxiYNVTvAIJATYhc3s2hHAQvJLWTAtjPDeWNUAQD/PL0ne2RSIyPjbW
+Hhq2P3rJYi4iYYmx2nL2wMGLYzPv4jAftPFxVTWrgoFa
+=sQyV
+-----END PGP SIGNATURE-----

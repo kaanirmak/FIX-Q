@@ -1,0 +1,271 @@
+{
+  "id": null,
+  "uid": "fixq-borsa",
+  "title": "📈 FINORA-Q Borsa Test Dashboard (BIST & Equities HFT)",
+  "tags": ["finora-q", "borsa", "bist", "hft", "pqc"],
+  "timezone": "browser",
+  "refresh": "2s",
+  "schemaVersion": 38,
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "type": "stat",
+      "title": "Borsa Throughput (TPS)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_throughput_tps{domain=\"borsa\"}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "green", "value": 50 },
+              { "color": "purple", "value": 250 }
+            ]
+          },
+          "unit": "reqps"
+        }
+      },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto" }
+    },
+    {
+      "id": 2,
+      "gridPos": { "h": 4, "w": 5, "x": 4, "y": 0 },
+      "type": "stat",
+      "title": "Total Borsa Orders Processed",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "sum(fixq_orders_total{domain=\"borsa\"})",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "locale"
+        }
+      },
+      "options": { "colorMode": "background", "graphMode": "area" }
+    },
+    {
+      "id": 3,
+      "gridPos": { "h": 4, "w": 5, "x": 9, "y": 0 },
+      "type": "stat",
+      "title": "Matching Engine Speed",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_borsa_matching_latency_us",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 50 },
+              { "color": "red", "value": 150 }
+            ]
+          },
+          "unit": "µs"
+        }
+      },
+      "options": { "colorMode": "value", "graphMode": "area" }
+    },
+    {
+      "id": 4,
+      "gridPos": { "h": 4, "w": 5, "x": 14, "y": 0 },
+      "type": "stat",
+      "title": "P50 Latency (TLS vs PQC)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"borsa\", metric=\"p50\", security=\"tls\"}",
+          "legendFormat": "TLS 1.3",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"borsa\", metric=\"p50\", security=\"pqc\"}",
+          "legendFormat": "PQC Tunnel",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 3 },
+              { "color": "red", "value": 10 }
+            ]
+          }
+        }
+      },
+      "options": { "colorMode": "value", "graphMode": "none" }
+    },
+    {
+      "id": 5,
+      "gridPos": { "h": 4, "w": 5, "x": 19, "y": 0 },
+      "type": "stat",
+      "title": "P99.9 Tail Latency (PQC)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"borsa\", metric=\"p999\", security=\"pqc\"}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "orange", "value": 5 },
+              { "color": "red", "value": 12 }
+            ]
+          },
+          "unit": "ms"
+        }
+      },
+      "options": { "colorMode": "background", "graphMode": "area" }
+    },
+    {
+      "id": 6,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "type": "timeseries",
+      "title": "Borsa Latency Distribution (TLS 1.3 vs Quantum-Safe ML-KEM/ML-DSA)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"borsa\", security=\"tls\"}",
+          "legendFormat": "TLS {{metric}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"borsa\", security=\"pqc\"}",
+          "legendFormat": "PQC {{metric}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12
+          },
+          "unit": "ms"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "type": "timeseries",
+      "title": "Real-time Order Throughput (TPS Rate)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_throughput_tps{domain=\"borsa\"}",
+          "legendFormat": "Actual TPS",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 25
+          },
+          "unit": "reqps"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "gridPos": { "h": 7, "w": 8, "x": 0, "y": 12 },
+      "type": "piechart",
+      "title": "BIST Symbols Trading Volume",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_borsa_symbol_volume_total",
+          "legendFormat": "{{symbol}}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right" },
+        "pieType": "donut",
+        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 9,
+      "gridPos": { "h": 7, "w": 8, "x": 8, "y": 12 },
+      "type": "bargauge",
+      "title": "Order Execution Status (Filled vs Partial vs Rejected)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_orders_total{domain=\"borsa\"}",
+          "legendFormat": "{{status}} ({{security}})",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "locale"
+        }
+      },
+      "options": { "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 10,
+      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 12 },
+      "type": "bargauge",
+      "title": "Order Types Distribution",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_borsa_order_type_total",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "locale"
+        }
+      },
+      "options": { "orientation": "vertical", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    }
+  ]
+}

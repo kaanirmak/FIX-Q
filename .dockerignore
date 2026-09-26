@@ -1,0 +1,12 @@
+.git
+.github
+.vscode
+.DS_Store
+logs/
+bin/
+lib/
+build/
+monitoring/data/
+scratch/
+*.pid
+*.log

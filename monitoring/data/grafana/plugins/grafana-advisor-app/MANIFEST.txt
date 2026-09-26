@@ -1,0 +1,38 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "grafana",
+  "signedByOrg": "grafana",
+  "signedByOrgName": "Grafana Labs",
+  "plugin": "grafana-advisor-app",
+  "version": "1.0.2",
+  "time": 1784028403657,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "LICENSE": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
+    "CHANGELOG.md": "8f5aa5879814bd8f624ef6a4f4286bb44818d2969af734f8bd89a308d25dbed3",
+    "plugin.json": "cf690b462765cc1d41e3c8c7f99ceb0aa8f8e693bac53f7bcdf82e0d5dc3b0d1",
+    "389.js.map": "dfe719ae52c39981a6524820c84c47709774466b30ff4fbff9fdbe0441219fcf",
+    "337.js": "bb23974f2c9970e28e16f97b96413a0b99fd5d55e20cdb24b0c6a8f627aea93b",
+    "381.js.map": "dc70b34e5679fa24b3122a9fe5bb35f52bf1419c5862e5668a8d4cb22e96f6a8",
+    "img/logo.svg": "102e3e85fcbdc626417bfbdb8aaac9d9b34a900f43f7fce48dc4c929e04c9adb",
+    "337.js.map": "738ed157b4a444f128815d486a64f1e54f5157a86d7fba2db86b26e70d29fc27",
+    "381.js": "1975c18f581da1e8b88481773d80d088dbba4a35994bf8cd204e9e45537b9aac",
+    "README.md": "df5187776b4015a998a9c3b7d0556e9eaddbfe6ee386187491a4156c8bace490",
+    "module.js.map": "08a3f34a94b64794683d1ac81c5d3d507d7deedc216b18a0aaaf4d0bd84feb53",
+    "389.js": "bb0bbc4ce89fdfedd53024c13e4c139ba99173c57e7489d793aa9fb68d70628f",
+    "module.js": "b0e86096621fd648433afb439e7dddd95195d5d30f95921a9b93b1d720505a81"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+
+wsA+BAETCgBtBYJqVhzzCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JnxmQSuVxcafYd4V7AIVJc6SVz5Mpk6Hj/51JB
+mcAkEugWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAA4XsCB2GGt/Bteu8ZA9I4
+AIaKINIf02oYpEV5igBEi4zSUkYXX5Fe/3v75C5ewrZKonyO/7eT4ycF1Mjp
+CnJcSvnahbDiAgkBe/t7FHt8ViZJv62liwSNJA8jj43c/OJBxXt7SGtj8oSM
+ws8HDlvYzLQz4mtekOsjt8bWx6AWrDIbj0GUN+d6EcE=
+=JHHY
+-----END PGP SIGNATURE-----

@@ -1,0 +1,273 @@
+{
+  "id": null,
+  "uid": "fixq-web3",
+  "title": "🌐 FINORA-Q Web3 Test Dashboard (Crypto, DeFi & Quantum-Safe DEX)",
+  "tags": ["finora-q", "web3", "crypto", "defi", "dex", "pqc"],
+  "timezone": "browser",
+  "refresh": "2s",
+  "schemaVersion": 38,
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "type": "stat",
+      "title": "Web3 DEX Swaps (TPS)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_throughput_tps{domain=\"web3\"}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "purple", "value": null },
+              { "color": "blue", "value": 25 },
+              { "color": "green", "value": 100 }
+            ]
+          },
+          "unit": "reqps"
+        }
+      },
+      "options": { "colorMode": "value", "graphMode": "area" }
+    },
+    {
+      "id": 2,
+      "gridPos": { "h": 4, "w": 5, "x": 4, "y": 0 },
+      "type": "stat",
+      "title": "Total Swaps Processed",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "sum(fixq_orders_total{domain=\"web3\"})",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "locale"
+        }
+      },
+      "options": { "colorMode": "background", "graphMode": "area" }
+    },
+    {
+      "id": 3,
+      "gridPos": { "h": 4, "w": 5, "x": 9, "y": 0 },
+      "type": "stat",
+      "title": "Simulated Gas Price",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_web3_gas_price_gwei",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 35 },
+              { "color": "red", "value": 75 }
+            ]
+          },
+          "unit": "currencyGWEI"
+        }
+      },
+      "options": { "colorMode": "value", "graphMode": "area" }
+    },
+    {
+      "id": 4,
+      "gridPos": { "h": 4, "w": 5, "x": 14, "y": 0 },
+      "type": "stat",
+      "title": "Block Confirmation Delay",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_web3_block_time_ms",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "orange", "value": 400 },
+              { "color": "red", "value": 1500 }
+            ]
+          },
+          "unit": "ms"
+        }
+      },
+      "options": { "colorMode": "value", "graphMode": "area" }
+    },
+    {
+      "id": 5,
+      "gridPos": { "h": 4, "w": 5, "x": 19, "y": 0 },
+      "type": "stat",
+      "title": "MEV Protection Success Rate",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_web3_mev_protection_rate_percent",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 90 },
+              { "color": "green", "value": 98 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "options": { "colorMode": "background", "graphMode": "none" }
+    },
+    {
+      "id": 6,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "type": "timeseries",
+      "title": "Web3 FIX-to-DEX Gateway Latency (Classical vs PQC Dilithium Signature)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"web3\", security=\"tls\"}",
+          "legendFormat": "Classical TLS {{metric}}",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"web3\", security=\"pqc\"}",
+          "legendFormat": "PQC Dilithium {{metric}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15
+          },
+          "unit": "ms"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "type": "timeseries",
+      "title": "EIP-1559 Dynamic Gas Price & Priority Fee (Gwei)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_web3_gas_price_gwei",
+          "legendFormat": "Gas Price (Gwei)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 20
+          },
+          "unit": "currencyGWEI"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "gridPos": { "h": 7, "w": 8, "x": 0, "y": 12 },
+      "type": "piechart",
+      "title": "Crypto Trading Pairs Volume",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_web3_pair_volume_total",
+          "legendFormat": "{{pair}}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right" },
+        "pieType": "donut",
+        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 9,
+      "gridPos": { "h": 7, "w": 8, "x": 8, "y": 12 },
+      "type": "bargauge",
+      "title": "Wallet Signature Verification Time (ML-DSA vs secp256k1)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_web3_quantum_wallet_verify_us",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "µs"
+        }
+      },
+      "options": { "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 10,
+      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 12 },
+      "type": "bargauge",
+      "title": "DEX Liquidity Pool Slippage (bps)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_web3_slippage_bps",
+          "legendFormat": "Slippage",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 15 },
+              { "color": "red", "value": 35 }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "options": { "orientation": "vertical", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    }
+  ]
+}

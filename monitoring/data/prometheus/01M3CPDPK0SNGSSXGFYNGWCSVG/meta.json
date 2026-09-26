@@ -1,0 +1,18 @@
+{
+	"ulid": "01M3CPDPK0SNGSSXGFYNGWCSVG",
+	"minTime": 1790338557541,
+	"maxTime": 1790344800000,
+	"stats": {
+		"numSamples": 174592,
+		"numFloatSamples": 174592,
+		"numSeries": 129,
+		"numChunks": 1621
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01M3CPDPK0SNGSSXGFYNGWCSVG"
+		]
+	},
+	"version": 1
+}

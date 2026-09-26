@@ -1,0 +1,53 @@
+{
+    "type": "datasource",
+    "name": "Google Cloud Monitoring",
+    "id": "stackdriver",
+    "category": "cloud",
+    "metrics": true,
+    "alerting": true,
+    "annotations": true,
+    "logs": true,
+    "backend": true,
+    "includes": [],
+    "queryOptions": {
+        "maxDataPoints": true,
+        "cacheTimeout": true
+    },
+    "executable": "gpx_grafana_cloudmonitoring_datasource",
+    "info": {
+        "updated": "2026-08-26",
+        "description": "Data source for Google's monitoring service (formerly named Stackdriver)",
+        "version": "12.6.2",
+        "logos": {
+            "small": "img/cloud_monitoring_logo.svg",
+            "large": "img/cloud_monitoring_logo.svg"
+        },
+        "author": {
+            "name": "Grafana Labs",
+            "url": "https://grafana.com"
+        },
+        "keywords": [
+            "gcp",
+            "gcm",
+            "google",
+            "cloud",
+            "stackdriver",
+            "datasource"
+        ],
+        "links": [
+            {
+                "name": "Raise issue",
+                "url": "https://github.com/grafana/grafana-cloudmonitoring-datasource/issues/new"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://grafana.com/docs/grafana/latest/datasources/google-cloud-monitoring/"
+            }
+        ]
+    },
+    "dependencies": {
+        "grafanaDependency": ">=12.3.0-0",
+        "plugins": []
+    },
+    "buildMode": "production"
+}

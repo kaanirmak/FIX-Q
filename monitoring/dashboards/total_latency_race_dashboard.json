@@ -1,0 +1,563 @@
+{
+  "id": null,
+  "uid": "fixq-latency-race",
+  "title": "⚖️ FINORA-Q: Uçtan Uca Latans & Kriptografik Kıyaslama Terminali",
+  "tags": ["finora-q", "enterprise", "executive", "benchmark", "pqc-transition"],
+  "timezone": "browser",
+  "refresh": "2s",
+  "schemaVersion": 38,
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "type": "stat",
+      "title": "🏛️ KLASİK EMİR İLETİMİ (P50)",
+      "description": "Geleneksel TLS 1.3 / ECDHE Sıfır Handshake Saf İşlem P50 Gecikmesi • Port: 5011, 5012, 5013",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"all\",security=\"classical_tls\"}",
+          "legendFormat": "Klasik Altyapı (TLS 1.3)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "#38bdf8", "mode": "fixed" },
+          "unit": "ms",
+          "decimals": 2
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 2,
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+      "type": "stat",
+      "title": "🛡️ POST-KUANTUM İLETİM (P50)",
+      "description": "NIST FIPS 203 ML-KEM-768 & FIPS 204 ML-DSA-65 Saf İşlem P50 Gecikmesi • Port: 5021, 5022, 5023",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"all\",security=\"quantum_pqc\"}",
+          "legendFormat": "Post-Kuantum (FIPS PQC)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "#a855f7", "mode": "fixed" },
+          "unit": "ms",
+          "decimals": 2
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 3,
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+      "type": "stat",
+      "title": "⚡ KRİPTOGRAFİK GECİKME CEZASI",
+      "description": "Kafes tabanlı şifrelemenin getirdiği net ek gecikme farkı (PQC - TLS Baseline)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_overhead_delta_ms{domain=\"all\"}",
+          "legendFormat": "Net Ek Yük (Delta)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "#f59e0b", "mode": "fixed" },
+          "unit": "ms",
+          "decimals": 2
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 4,
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 },
+      "type": "stat",
+      "title": "🚀 SANİYEDE YAPILAN İŞLEM SAYISI",
+      "description": "Tüm protokoller (BIST FIX 4.4, ISO 20022 FAST, Web3 EVM) toplam saniyelik işlem hızı (Throughput TPS)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "sum(fixq_throughput_tps)",
+          "legendFormat": "Toplam Hacim (İşlem/sn)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "#10b981", "mode": "fixed" },
+          "unit": "reqps",
+          "decimals": 1
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 5,
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 0 },
+      "type": "stat",
+      "title": "🔑 1-SEFERLİK SEANS KURULUMU",
+      "description": "Oturum başlangıcı Logon & KEM kurulum gecikmesi (Emir akışında sıfır handshake)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_session_handshake_ms{security=\"classical_tls\"}",
+          "legendFormat": "Klasik TLS 1.3 Setup",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_session_handshake_ms{security=\"quantum_pqc\"}",
+          "legendFormat": "Kuantum FIPS PQC Setup",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "ms",
+          "decimals": 2
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 14,
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 0 },
+      "type": "stat",
+      "title": "🔌 OTURUM STATÜSÜ (ZERO-HS)",
+      "description": "Kalıcı TCP Keep-Alive Oturum ve Sıfır Handshake İletim Mimarisi",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_session_persistent_mode",
+          "legendFormat": "Kalıcı Oturum (Zero-Handshake)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "#10b981", "mode": "fixed" },
+          "unit": "short",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "1": { "text": "AKTİF (ZERO-HS)", "color": "#10b981" },
+                "0": { "text": "PASİF", "color": "#ef4444" }
+              }
+            }
+          ]
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 6,
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 4 },
+      "type": "timeseries",
+      "title": "📊 GERÇEK ZAMANLI SİSTEM LATANS EĞRİSİ (Uçtan Uca SLA Karşılaştırma Denetimi)",
+      "description": "Klasik Referans (TLS 1.3) vs Post-Kuantum Korumalı (FIPS PQC) uçtan uca işlem gecikmesi ve net kriptografik ek yük",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"all\",security=\"classical_tls\"}",
+          "legendFormat": "Klasik Altyapı Taban Gecikmesi (Sol: TLS 1.3)",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"all\",security=\"quantum_pqc\"}",
+          "legendFormat": "Post-Kuantum Korumalı Gecikme (Sağ: NIST FIPS PQC)",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_overhead_delta_ms{domain=\"all\"}",
+          "legendFormat": "Net Kriptografik Ek Yük (Delta SLA Overhead)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "spanNulls": true
+          },
+          "unit": "ms",
+          "decimals": 2
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Klasik Altyapı Taban Gecikmesi (Sol: TLS 1.3)" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#38bdf8", "mode": "fixed" } },
+              { "id": "custom.lineWidth", "value": 3 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Post-Kuantum Korumalı Gecikme (Sağ: NIST FIPS PQC)" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#a855f7", "mode": "fixed" } },
+              { "id": "custom.lineWidth", "value": 3 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Net Kriptografik Ek Yük (Delta SLA Overhead)" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#f59e0b", "mode": "fixed" } },
+              { "id": "custom.lineStyle", "value": { "dash": [4, 4], "fill": "dash" } },
+              { "id": "custom.lineWidth", "value": 2 }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "calcs": ["min", "max", "mean", "lastNotNull"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 13 },
+      "type": "bargauge",
+      "title": "📈 Borsa İstanbul (BIST FIX 4.4) HFT Altyapı Denetimi",
+      "description": "Port 5011 (Standart FIX 4.4) vs Port 5021 (ML-KEM-768 Hibrit FIX)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"borsa\",security=\"classical_tls\"}",
+          "legendFormat": "Klasik FIX (Port 5011)",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"borsa\",security=\"quantum_pqc\"}",
+          "legendFormat": "Post-Kuantum FIX (Port 5021)",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_overhead_delta_ms{domain=\"borsa\"}",
+          "legendFormat": "Net Ek Yük (ms)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#10b981", "value": null },
+              { "color": "#38bdf8", "value": 0.35 },
+              { "color": "#f59e0b", "value": 0.70 },
+              { "color": "#ef4444", "value": 1.10 }
+            ]
+          },
+          "unit": "ms",
+          "decimals": 2,
+          "min": 0,
+          "max": 1.5
+        }
+      },
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "showUnfilled": true
+      }
+    },
+    {
+      "id": 8,
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 13 },
+      "type": "bargauge",
+      "title": "🏦 TCMB FAST & Bankalararası Takas (ISO 20022) SLA Denetimi",
+      "description": "Port 5012 (Standart pacs.008) vs Port 5022 (ML-DSA-65 Denetim İmzası)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"banking\",security=\"classical_tls\"}",
+          "legendFormat": "Klasik ISO 20022 (Port 5012)",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"banking\",security=\"quantum_pqc\"}",
+          "legendFormat": "Post-Kuantum ISO (Port 5022)",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_overhead_delta_ms{domain=\"banking\"}",
+          "legendFormat": "Net Ek Yük (ms)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#10b981", "value": null },
+              { "color": "#38bdf8", "value": 0.35 },
+              { "color": "#f59e0b", "value": 0.70 },
+              { "color": "#ef4444", "value": 1.10 }
+            ]
+          },
+          "unit": "ms",
+          "decimals": 2,
+          "min": 0,
+          "max": 1.5
+        }
+      },
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "showUnfilled": true
+      }
+    },
+    {
+      "id": 9,
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 13 },
+      "type": "bargauge",
+      "title": "🌐 Kurumsal Dijital Varlık & DEX Saklama (EVM RPC) Analizi",
+      "description": "Port 5013 (Standart secp256k1) vs Port 5023 (Dilithium + MEV Kalkanı)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"web3\",security=\"classical_tls\"}",
+          "legendFormat": "Klasik Web3 RPC (Port 5013)",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_total_latency_ms{domain=\"web3\",security=\"quantum_pqc\"}",
+          "legendFormat": "Post-Kuantum RPC (Port 5023)",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_overhead_delta_ms{domain=\"web3\"}",
+          "legendFormat": "Net Ek Yük (ms)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#10b981", "value": null },
+              { "color": "#38bdf8", "value": 0.35 },
+              { "color": "#f59e0b", "value": 0.70 },
+              { "color": "#ef4444", "value": 1.10 }
+            ]
+          },
+          "unit": "ms",
+          "decimals": 2,
+          "min": 0,
+          "max": 1.5
+        }
+      },
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "showUnfilled": true
+      }
+    },
+    {
+      "id": 10,
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 19 },
+      "type": "timeseries",
+      "title": "⏱️ Kurumsal SLA ve Kuyruk Gecikmesi Dağılımı (Tail Latency: P50 / P90 / P99 / P99.9)",
+      "description": "Klasik vs Kuantum Tail Latency zaman serisi ve SLA uç sınır analizi",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"all\",metric=\"p50\",security=\"tls\"}",
+          "legendFormat": "Klasik P50 Baseline",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"all\",metric=\"p99\",security=\"tls\"}",
+          "legendFormat": "Klasik P99 SLA Sınırı",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"all\",metric=\"p50\",security=\"pqc\"}",
+          "legendFormat": "Post-Kuantum P50",
+          "refId": "C"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_latency_ms{domain=\"all\",metric=\"p99\",security=\"pqc\"}",
+          "legendFormat": "Post-Kuantum P99 SLA Sınırı",
+          "refId": "D"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 8
+          },
+          "unit": "ms",
+          "decimals": 2
+        }
+      },
+      "options": {
+        "legend": { "calcs": ["mean", "lastNotNull"], "displayMode": "table", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 11,
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 19 },
+      "type": "bargauge",
+      "title": "🔐 Kriptografik Algoritma Mikro-Gecikme Dağılımı (FIPS 203 & 204 Overhead)",
+      "description": "NIST onaylı PQC algoritmalarının mikrosaniye seviyesinde işlem maliyeti dağılımı",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_crypto_overhead_ms",
+          "legendFormat": "{{domain}} - {{algorithm}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "ms",
+          "decimals": 2
+        }
+      },
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 12,
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 26 },
+      "type": "bargauge",
+      "title": "📦 Ağ Çerçevesi ve Bant Genişliği Analizi (Wire Frame & MTU Expansion)",
+      "description": "Paket başına ağ genişlemesi: Standart finansal çerçeve vs Hibrit PQC çerçevesi (Byte)",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_wire_packet_bytes",
+          "legendFormat": "{{protocol}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "bytes"
+        }
+      },
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "id": 13,
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 26 },
+      "type": "timeseries",
+      "title": "🚀 Protokol İşlem Kapasitesi (Throughput TPS Kapasite Denetimi)",
+      "description": "Borsa, Bankacılık ve Web3 protokollerinin gerçek zamanlı throughput performansı",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "fixq_throughput_tps",
+          "legendFormat": "{{domain}} İşlem/sn (TPS)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 12
+          },
+          "unit": "reqps"
+        }
+      },
+      "options": {
+        "legend": { "calcs": ["mean", "lastNotNull"], "displayMode": "table", "placement": "bottom" }
+      }
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "grafana",
+  "signedByOrg": "grafana",
+  "signedByOrgName": "Grafana Labs",
+  "plugin": "mssql",
+  "version": "13.0.5",
+  "time": 1789068742004,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "sql-query-editor.js.map": "3ce4e16aeeb6e45d43fc8c9a22783535195cd124b28f62418b686e41fa5825e9",
+    "LICENSE": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
+    "189.js": "04723c69a3de44b94b2aa3cc1beafda0e0b605b5c005ebabfa08d0e82601ee6a",
+    "138.js.map": "93cc4e62f36ef5ea1a4ee152105982b7980fbdd88c5ac314b315a9e999ac42e1",
+    "908.js": "3b58685d40840da9ea01591fca5d3bc40b5f252e43a58740ba5a2aa77ee5255c",
+    "locales/hu-HU/mssql.json": "f4df418ee4f41e738ed38aaf3c9bc7fb866f5ca073362d1b474e178dd8184085",
+    "locales/ko-KR/mssql.json": "ea53d9f8f7d078b674e444a45aca605de4a79b3511f2dc3bec9e4872d4617e78",
+    "locales/id-ID/mssql.json": "7cc6679abdbe9acada822a0400464404fd1e96803c6bd05509eadcf6c3f4b21c",
+    "locales/es-ES/mssql.json": "2a634b5360040612a4d0861ae08fea1206539807376f34e772bb9d5c8ca91d4d",
+    "locales/ru-RU/mssql.json": "0e1057ebdd9a6f6b28bb8e57aa5f798a7935ff8c6710def69c4cf64cad0b7fa5",
+    "locales/fr-FR/mssql.json": "1ba7f2e220e3e756858e670b6074f253d8c1a68087672dab1f3b852e04dd1a18",
+    "locales/en-US/mssql.json": "c375668cdd66096a86847ba88b0f684b22fd8c7fa8c7fa90c1e99ea4212875aa",
+    "locales/zh-Hant/mssql.json": "c677b307918f61d718ad7b688f398958bf5a84b94c1841438a5b548ea4e6f861",
+    "locales/zh-Hans/mssql.json": "1f452826e244bf4c74f9854c9aeade581513149bb38b5cc344141defe6ef8d6d",
+    "locales/pl-PL/mssql.json": "672bb8938e1216fcfc382e2378319205a05d1044e2da811b33fb0f0a8ad59621",
+    "locales/it-IT/mssql.json": "7750aace87983121178d4ac776a7cc53ca2836a30b73fb86a197ff0df6276bc8",
+    "locales/sv-SE/mssql.json": "7e437565de95a59b1f7ac3bcc0e49d6e2951f6174898a1362c7f9f071ffdc878",
+    "locales/nl-NL/mssql.json": "524b626eee34e6dd0070a96134bf3e82de66f13c4b2795d1e9961ec8664cebe4",
+    "locales/ja-JP/mssql.json": "65d3bc6d2b1f41a2fb4d6a520cca26fc885157d9ea22f2eece033ff6ba075cbf",
+    "locales/pt-PT/mssql.json": "12b9273b415fa339db93947fe3319b8ba2526919ec4672377fbc8ceeaca6c225",
+    "locales/pt-BR/mssql.json": "cf3a51948d93ad0647d7e1d1bfc8476fa1f2f59506920ee85850569756a4e739",
+    "locales/de-DE/mssql.json": "f6bb5efeca959581d584e55b2c9d92bbd2a4e7aa30132d6d2e6187415b369feb",
+    "locales/tr-TR/mssql.json": "f359cae379befd0a498f21a661d1b2a5d4e0146a304d373adfafba832c6c6491",
+    "locales/cs-CZ/mssql.json": "1df7694097774ed67481e7780ece8ceeb2dfa9863442faa53b08d85e1a41bfee",
+    "460.js.map": "ff3a534a8194b284f0dd6ca5fc2f5dabdf8309c4ba4c426a15cd3ece5e0b2886",
+    "35.js.map": "b3c68691a083f53695406c792d8aae9aa09b1d663afc5f0d62567efd4e1c7eea",
+    "321.js": "0cb6a66dace3dc119627f57c9f19e7d019a963ce4f42522ddbdc681f62e89c05",
+    "492.js": "0f99d83ae64aab16ab07612a1e856a25a2417657b32337647fa8cbdf7062def4",
+    "138.js": "5234e53c24ff4088c2b49f829c5be2d2966c7447afcc236a82fac0aa25e3f59f",
+    "CHANGELOG.md": "4a585946c18955bdf17a48f37827e33b41b408247cea964fce7a069e1dc241fa",
+    "492.js.map": "ab4d8e2ea3a9ea3dd327f8c525510f21d0f740149e8a007d4ea17edd8edd6ecc",
+    "156.js.map": "2ba74b3e40bc5853c262ad824cb59026811a898d33f5d5367ab131b4b3163e16",
+    "plugin.json": "15ae4e29bdeaf5f90802f5d135e28b3c936d3730e38e277ea2c702e412fe291c",
+    "437.js": "72a8f2e007536226a0f231b7bd5b0f68e8ec4a0d8bf3af7376a08bd5ae1e1c31",
+    "742.js.map": "1d4f7ab24f7942724f7dc8722d03a39e950e2bdb31b8920a28d1cddf376d9d37",
+    "734.js": "44166202241dc70e34ead9be09a1c60ed712976ba9ba189dddf693a77cc42929",
+    "384.js.map": "17b5671be73aec7785ecac692576e43de30a85c57668bd6e781a8605b2bfa2b8",
+    "195.js": "5911300b86c10e74c55e55177e404e6ea2a30da43705bdb992c2af94081c391d",
+    "482.js.map": "c753b669ca2f0caa03b9a654659d9360a5d5ca9486f7a5269fc086369fc2d93b",
+    "img/sql_server_logo.svg": "93d5f0afed372f17602ecf87536c218942032a9a9679c77841a3f189827dcb93",
+    "module.js.LICENSE.txt": "5f8c7a54980853e89db8f42f29cf29c65704398d93e72eeddc2bad0b21813c62",
+    "gpx_grafana-mssql-datasource_darwin_arm64": "28750a85fa84511d27507e64e74c5742f11bff8068a53b5f61809f850f4de465",
+    "195.js.map": "06b24f81c4bcf7df4902dbef15198d2cfe503bcc1f05e1bdec444c9cfb95a97e",
+    "180.js.map": "f43c451f453e3767ce254fc32b8910b535c0df513adf2622a29216a206b6ddee",
+    "597.js.map": "7acd446f63dae914566240d1761312cbeb90fac31df5a0a0bcee92a270f782bb",
+    "908.js.map": "af5a6180cd8ff859a7b874b3e18a490554f12829a6924813c226af8daa4db9c9",
+    "10.js": "2cc7ee2ff3d5aba7b20c5f04ff49bd75c8a207019dbca4b7f15e57fdf2dcef08",
+    "156.js": "c96c5104edb45844b22c6da8667afae74ab43cf9a7a824d6968fd23667eece37",
+    "go_plugin_build_manifest": "d17a45fd05eb0fe61039becd1f49fbdebfe1d9b6816ea16729216d04dca4d2bf",
+    "742.js": "a2184fc325f29344891d1ff37dce9c4968c64b9a912f09d23b41977ff35ddfcb",
+    "506.js": "33f2278b68468a511ccd269d53f28d4e7202fd1cf334ebc362addf8857ce9a08",
+    "10.js.map": "cbaaab7ae6a2f20d5b2006f2117a27d1734645aa8920473767eb1dca768661e6",
+    "384.js": "cc2c776e0d95a5cf17eb4733a52e8c9e61c62a02799905f75fc560f5a192251b",
+    "321.js.map": "cec3dcbdee0e072bb7412290d23500cb7a225e0a0cf47cb6338cdcbe57bb5f4e",
+    "189.js.map": "0bfb98c41c557fa7240c5d6e30339780cbf13ed53b38b0e76cc073f65438cbce",
+    "sql-query-editor.js": "60b49f27459ec45ce2a3a3d7ebaf7a1607f2e2fcd4ca40f6652bb003da86eeaa",
+    "460.js": "cdf8ef8c091b4b019f6dfcaa456c90b575db86a37d4b71ad008f7b392479549d",
+    "35.js": "f092a4aa0afccfdb810a7df81460ba2c3664a684433f53ec4629283f1154b312",
+    "734.js.map": "e956d28f81e51bbed48ecbb8f74e1f8b1d6642998c2a1b56029602cf1badf86d",
+    "180.js": "f208d8282a6ae3b632b12c9b3abf387f5f3f5db970a0b1ecf8ef53cdfd292035",
+    "482.js": "3b43ee5790e2dd406c47993ab51122d5b8ac290312a38787028a85a2dba493d2",
+    "466.js": "ddb3d704fae1ad8032e04f8c34f3465099b0c3334dee7c8aee599ed927ab7a69",
+    "597.js": "feb0b4a8e8d4c0e404f633764c723daf67be7b406a2d2b0e9fd28b5989d24311",
+    "README.md": "7f11b22ff615ce90e312c13a23ebb338226bec117f647884fe6def423ba40521",
+    "module.js.map": "a93550acf86e97500a21f51c9f608e1c9d84e8ee71c89f2ceedc133a77274527",
+    "506.js.map": "f089dbd67e406c7d1b27c4287026c54e85a5a92fafb468b2253d5c9b8a393ad7",
+    "40.js": "3d0c140dfaedad0ff32445463e76b698acaa9a02fe6657e72e114a8a4eef0d5f",
+    "module.js": "53ec483b9fde46894af8b8bf975fa2c691289f0c72fb601246318e3e188e04bd",
+    "437.js.map": "e64e01948ddb0c88027193feea822426d50ccee891010325b0204ad6a179de75",
+    "466.js.map": "8675258ee68d0d750abd90d03b011fd00e7428e96dc3f8360bf9ff6b98601680",
+    "40.js.map": "1507642d0ce57975acda1fc403141e159cf8b7496e2e65941cf96ca162ebc3e7"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+
+wsA9BAETCgBtBYJqowXGCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JnQEvD3Tw1c3MPkkymRRETxc5mfVmbiMDRJsKH
+6nXaNagWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAA4/MCCP8BCIEs+9AkWlhn
+/Rjw8z5lzvFc1ba2D4p6m2UP/etP4GGdYTGEqAXloA0rxzAODG6JKTCBBRqa
+5dYNNjrni3+IAgdxjylXMJ9PHMW+mxCLrohz/V0QDW6lpvZfAa3O3uLdqs2+
+egE0UAXK1RZxYZENHBGiqALgGkpGwKhepI+FlOS6bA==
+=a6pe
+-----END PGP SIGNATURE-----

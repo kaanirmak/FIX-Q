@@ -1,0 +1,52 @@
+{
+    "type": "datasource",
+    "name": "PostgreSQL",
+    "id": "grafana-postgresql-datasource",
+    "executable": "gpx_grafana_postgresql_datasource",
+    "aliasIDs": [
+        "postgres"
+    ],
+    "category": "sql",
+    "info": {
+        "description": "Data source for PostgreSQL and compatible databases",
+        "keywords": [
+            "postgresql",
+            "postgres",
+            "sql",
+            "database"
+        ],
+        "author": {
+            "name": "Grafana Labs",
+            "url": "https://grafana.com"
+        },
+        "logos": {
+            "small": "img/postgresql_logo.svg",
+            "large": "img/postgresql_logo.svg"
+        },
+        "version": "13.0.3",
+        "updated": "2026-09-08",
+        "links": [
+            {
+                "name": "Raise issue",
+                "url": "https://github.com/grafana/grafana-postgresql-datasource/issues/new"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://grafana.com/docs/grafana/latest/datasources/postgres/"
+            }
+        ]
+    },
+    "dependencies": {
+        "grafanaDependency": ">=12.3.0-0",
+        "plugins": []
+    },
+    "alerting": true,
+    "annotations": true,
+    "metrics": true,
+    "logs": true,
+    "backend": true,
+    "queryOptions": {
+        "minInterval": true
+    },
+    "buildMode": "production"
+}

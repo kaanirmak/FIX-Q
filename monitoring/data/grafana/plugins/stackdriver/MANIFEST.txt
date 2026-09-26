@@ -1,0 +1,49 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "grafana",
+  "signedByOrg": "grafana",
+  "signedByOrgName": "Grafana Labs",
+  "plugin": "stackdriver",
+  "version": "12.6.2",
+  "time": 1787758260299,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "LICENSE": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
+    "CHANGELOG.md": "eb0b5e3fc0ae62c32a496e8718af3ae57c97c5f7eb1f6257469e42150a7b36be",
+    "plugin.json": "afc109565a3bfffdcaf0bf83aca8df42e7eb2c448f350d02e1fb0aed0e711160",
+    "img/cloud_monitoring_logo.svg": "99e2d222ca4e0a49ab5266e279bee86546fa6c50b97d4730c24d8bb015909642",
+    "go_plugin_build_manifest": "344333adee318245b252e03e85d13c5683dfdbd0301ba88feac8208ca929d226",
+    "gpx_grafana_cloudmonitoring_datasource_darwin_arm64": "9bb741560a52228c2ac6cf6e66e5fc1747dd20eb31baa0a6879af83f64e34004",
+    "dashboards/firewall-insight-monitoring.json": "11f6df0632cc9319ae2cd8e64a998518fb4511a8baa5c55ff0e80e155062bbb2",
+    "dashboards/cloud-storage-monitoring.json": "c98a570feeb391a60fb5a27d090aff6e2b8870381bf6b150a5c44e286956c58d",
+    "dashboards/https-loadbalancer-monitoring.json": "80911f4775c5a06d61038305531ed016eaf9e1334525a5b87dcf5a84287ae1a1",
+    "dashboards/cloudsql-mysql-monitoring.json": "e9d36d97aa8aa5c50d7b74f92b206fb3b595a1e835da8641230a2e699e9e70b8",
+    "dashboards/network-tcp-loadbalancer-monitoring.json": "621b7bed1b096142b683d6aea835505e8a5f65c051f1adbfc07f5cd12442effc",
+    "dashboards/gke-prometheus-pod-node-monitoring.json": "d94c8ba72ec114b95105bb6468ca8f0fa83310488f3970087ed4a72d1f559b84",
+    "dashboards/https-lb-backend-services-monitoring.json": "0b8f50eb3f638b71dbfdaa7d3184ab9d2fe6599d9a7ffa97a646bdb9e45bcff3",
+    "dashboards/gce-network-monitoring.json": "8e81ebb85c5ef63182b8a38127d896ea6804aa613a85d6bf0c5644132217ea13",
+    "dashboards/cloudfunctions-monitoring.json": "0948cfb26fbaf95c628a51af47dfe9881aad65f00c61b8353f71256805b27492",
+    "dashboards/dataprocessing-monitoring.json": "cecf73e9162ae2ff2630afb24949188e44b479da669a4d8402de3e6a414f2d89",
+    "dashboards/gce-vm-instance-monitoring.json": "719258eec94ad2adeb2f2cd2e96e79b16081073c0b7f11e737444487e1a01ca2",
+    "dashboards/cloudsql-postgre-monitoring.json": "3602c16fe834a6d60d95e1ae00b36837b1cfd833d9420f6d3b75c7d0847ef2c2",
+    "dashboards/cloudsql-monitoring.json": "9006352db2885cdfd2d05af663aa301c921a838667bd172a24b453d7fdfa6496",
+    "dashboards/micro-service-monitoring.json": "dea884b7c78626efe00faa675e43be31445c9df0621715cfe1865ebd3859bbfc",
+    "dashboards/cloudtasks-monitoring.json": "09688445f991f8622fd95ba5159eae9319fe17ddbee5149f2c5ce196edffe94f",
+    "README.md": "04e86be55517e6c171e9cb98fbd884e82bd488d060ef42e8ab15cebcc9eb8cc1",
+    "module.js.map": "4d776f46f2a20f1eecb63bb0ef45e6e18c176dfe33f8ba97de1a8131673a3a14",
+    "module.js": "51052a4aa12a953344f7a18bfc91eb7872fb5ac90b191a9ccc3f8f3ed881a83a"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+
+wsA/BAETCgBtBYJqjwa0CRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3Jn/HlhnvS+gTYsFbqoo5OPaDqZNUuQcF5iUinz
+FMrxljAWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAfdoCCQFhUhpSmBxWVw3B
+bipe5IWAZnOMELP/J+G2T6ybYNpu584tCIXtoncoEUFHydUWLm9IFTZ6PpZF
+gcFBZ1Gh29oaxAIJAV89z+wIfeH2E9Z+7oZw+IWDDkBFp07JmnAtv5ZXIgk4
+IbOpDbWuxkXVhcmULC8VMDnJG1uo5Q6SRC2CJNhFvP/+
+=N1Wn
+-----END PGP SIGNATURE-----

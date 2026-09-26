@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 2s
+  evaluation_interval: 2s
+
+scrape_configs:
+  - job_name: 'finoraq_test_engine'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['finora-q:9100']
+        labels:
+          app: 'finora-q'
+          platform: 'finora-hft'

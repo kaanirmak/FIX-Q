@@ -1,0 +1,37 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "grafana",
+  "signedByOrg": "grafana",
+  "signedByOrgName": "Grafana Labs",
+  "plugin": "jaeger",
+  "version": "13.0.3",
+  "time": 1788994106616,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+    "CHANGELOG.md": "3805cb5ace442c675d99864d7140b8ecbbba31133efad335c8ee6bb1d65e2717",
+    "plugin.json": "5a273444f0efd68d1a4eace57e783add8f541726c4fddab0038e08526fbb7502",
+    "mockSearchResponse.json": "bbc42aa20c96e20e2226aab983f72b8fc5aad15d77167b5424a8d816345633de",
+    "mockTraceResponse.json": "5e2727694f8f05d4a21be29e6743b3e2fbd39b23ddd5f1fa4bc517be3ae6b141",
+    "mockJsonResponse.json": "aeb5a89092ef7f2a885649cb8ee6cca584d4ca2102ec7afb5edaf1da3fc3ceb8",
+    "img/jaeger_logo.svg": "2ba67eeda60b39315f13f2e490f0e3f0509b1c0fc581c3683d677e677cdf54f0",
+    "gpx_grafana-jaeger-datasource_darwin_arm64": "c8ef6ec82f25806e0c29beee2c242963e407db25b56d14cc7abd137542c76dc9",
+    "go_plugin_build_manifest": "aa191c89d4bd2c423542b03d848868f89788780a9d399aa73a97f63e4831ed1a",
+    "README.md": "c9729e23181899ee40b5ae97b00fc89b166ecd068b1503675f2011ebb9a91f42",
+    "module.js.map": "2502d7975657f369dbe7b8d200d7bbb6698c21de055865435b42b93cfb1c4698",
+    "module.js": "c27916dc01cff7a6fd4f66cf8837dd46796f851b875efd08b02b619a04007558"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+
+wsA9BAETCgBtBYJqoeI6CRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JngTzC1OdnRM7hKbuoEuW7dYtEtEhc2MK1oOoH
+HehPvRcWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAFKACCI/8BPBqANqxRAnR
+KWa1Amnjl44vsmIdA/VVxMQpWB5xZ6SnIDNhPybggUFoLV+VAVCXm5phC7R8
++OcsFVhAKbi7AgYhpnHPiOQVaWTxYk7Tu5AMjtsvX3QGo5ZJELTSpRAq7s0G
+bq+cNedRxGyHs3OUiPmAfOAkC14OMSTRUu4zUR/fLA==
+=BKUb
+-----END PGP SIGNATURE-----

@@ -1,0 +1,34 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "grafana",
+  "signedByOrg": "grafana",
+  "signedByOrgName": "Grafana Labs",
+  "plugin": "opentsdb",
+  "version": "13.0.3",
+  "time": 1789051303883,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "LICENSE": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
+    "CHANGELOG.md": "198a1a22dd21fdc6aee072c9c629655aec417363d9b0fc58beab43bbc66edeab",
+    "plugin.json": "ba88c1042c165c8efc5b887f9f8badd968a8aa5a3caa9af9a163d82d23444a28",
+    "img/opentsdb_logo.png": "faee182a166dcbc286b8a0c7221458930b1dd7e8f87fd887b9aa3851f4f3a37c",
+    "gpx_grafana-opentsdb-datasource_darwin_arm64": "4b9a423b9a062e79d15228c2f8b2a136bf816104d713f856bfdb5b718b8a68fa",
+    "go_plugin_build_manifest": "2c3630044658aafd8aa0fb31d02175cebdc822d7fec439d46849dd48f487c12d",
+    "README.md": "07a55fd658642f597f1a9bef625f999e5a3d3bdd114a1b2f46c3df428a38499a",
+    "module.js.map": "873e3d26bc30cab9133ada01323352df6fefc96b5a10ee7939cab7efe4c379ac",
+    "module.js": "b546bfafddec32e9749c8e75d11387f2de61aecd650372eb24eac02efb0631a6"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+
+wsA+BAETCgBtBYJqosGnCRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JnArsmrg9X9UtLbp4/VARq4yvkCfR8jPzg9uEe
+tv3IiF0WIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAjusCBiraKKQSJsMLTXGC
+IOAHP6EBAJyxLbRd4po6XTha2b21BFl4/BCP/XVqG1fv/s3aweNh/ViVgHVV
+egILHL3x38D/AgkBx+hZ8+MSlZWPzHBbREoJysh5LWdkenDTFqR9ii659tBp
+5cmfdaLzasdUaPEwEEGd8UmGhRrbu57RCIfO9+MVmFs=
+=2b4Y
+-----END PGP SIGNATURE-----
